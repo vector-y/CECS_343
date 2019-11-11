@@ -1,0 +1,28 @@
+CREATE TABLE customers (
+    firstName           VARCHAR(20) NOT NULL, 
+    lastName            VARCHAR(20) NOT NULL, 
+    phoneNumber         VARCHAR(20), 
+    mailAddress         VARCHAR(20), 
+    deliveryAddress     VARCHAR(20), 
+    CONSTRAINT customers_pk PRIMARY KEY (firstName, lastName) 
+);
+
+CREATE TABLE employees (
+    firstName           VARCHAR(20) NOT NULL, 
+    lastName            VARCHAR(20) NOT NULL, 
+    phoneNumber         VARCHAR(20), 
+    address             VARCHAR(20), 
+    salary              INTEGER, 
+    commissionRate      INTEGER, 
+    CONSTRAINT employees_pk PRIMARY KEY (firstName, lastName)
+);
+
+
+CREATE TABLE sales (
+    firstName       VARCHAR(20) NOT NULL, 
+    lastName        VARCHAR(20) NOT NULL, 
+    deliveryOption  VARCHAR(1) NOT NULL, .
+    date            DATE NOT NULL, 
+    salesRepID      INTEGER NOT NULL, 
+    CONSTRAINT sales_pk PRIMARY KEY (firstName, lastName, deliveryOption, date, salesRepID)
+);
