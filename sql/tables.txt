@@ -8,21 +8,46 @@ CREATE TABLE customers (
 );
 
 CREATE TABLE employees (
+    eID                 INT NOT NULL,
     firstName           VARCHAR(20) NOT NULL, 
     lastName            VARCHAR(20) NOT NULL, 
-    phoneNumber         VARCHAR(20), 
-    address             VARCHAR(20), 
-    salary              INTEGER, 
-    commissionRate      INTEGER, 
-    CONSTRAINT employees_pk PRIMARY KEY (firstName, lastName)
+    phoneNumber         VARCHAR(20) NOT NULL, 
+    address             VARCHAR(20) NOT NULL, 
+    salary              INT NOT NULL, 
+    commissionRate      INT NOT NULL, 
+    CONSTRAINT employees_pk PRIMARY KEY (eID)
 );
 
 
-CREATE TABLE sales (
+CREATE TABLE orders (
+    orderNumber     INT NOT NULL,
     firstName       VARCHAR(20) NOT NULL, 
     lastName        VARCHAR(20) NOT NULL, 
-    deliveryOption  VARCHAR(1) NOT NULL, .
-    date            DATE NOT NULL, 
-    salesRepID      INTEGER NOT NULL, 
-    CONSTRAINT sales_pk PRIMARY KEY (firstName, lastName, deliveryOption, date, salesRepID)
+    delivery        VARCHAR(1) NOT NULL, 
+    orderDate       DATE NOT NULL,
+    orderTime       TIME NOT NULL,
+    salesRepID      INT NOT NULL, 
+    balance         INT NOT NULL,
+    CONSTRAINT orders_fk PRIMARY KEY (orderNumber), 
+    CONSTRAINT orders_fk1 FOREIGN KEY (firstName, lastName) REFERENCES customers (firstName, lastName), 
+    CONSTRAINT orders_fk2 FOREIGN KEY (salesRepID) REFERENCES employees (eID)
+);
+
+
+CREATE TABLE orderDetails (
+    orderNumber     INTEGER NOT NULL, 
+    productName     VARCHAR(20) NOT NULL, 
+    quantity        INT NOT NULL, 
+    priceEach       DECIMAL(10,2) NOT NULL, -- quantity x items (MSRP)
+    CONSTRAINT orderDetails_pk PRIMARY KEY (orderNumber, productName), 
+    CONSTRAINT orderDetails_fk FOREIGN KEY (orderNumber) REFERENCES orders (orderNumber)
+);
+
+CREATE TABLE products (
+    productNumber       INT NOT NULL, 
+    productName         VARCHAR(20) NOT NULL, 
+    MSRP                DECIMAL(10, 2) NOT NULL, 
+    buyPrice            DECIMAL(10, 2) NOT NULL, 
+    quantityInStock     INT NOT NULL, 
+    CONSTRAINT products_pk PRIMARY KEY (productNumber)
 );

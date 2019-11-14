@@ -60,4 +60,8 @@ public class DBConnect {
         }//end try
     }
     
+    
+    public void closeConnection(Connection connect) {
+        
+    }
 }
