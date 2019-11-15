@@ -14,10 +14,10 @@ import java.util.Scanner;
 public class main {
     
     static String MASTERPASSWORD;
-
-
-
     
+    static DBConnect db = new DBConnect();
+    static Connection conn = db.connect();
+
     /**
  * Takes the input string and outputs "N/A" if the string is empty or null.
  * @param input The string to be mapped.
@@ -41,38 +41,37 @@ public class main {
         
         System.out.println("Great! Let's log you on...");
         
-        DBConnect db = new DBConnect();
-        Connection conn = db.connect();
-        
-        System.out.println("-------------------------------------------------------");
-        System.out.println("Main Menu");
-        String menu =     "1. New Sale\n"
-                        + "2. Add Customer\n"
-                        + "3. Edit Customer\n"
-                        + "4. Add Employee\n"
-                        + "5. Edit Employee\n"
-                        + "6. View Report\n"
-                        + "7. Exit\n";
-        
-        System.out.println(menu); 
+        Menu menu = new Menu();
+        menu.printMenu();
         String option = in.nextLine();
-        while (option != "7") {
-            if (option.equals("1")) {
-                // New Sale
-            } else if (option.equals("2")) {
-                // Add customer
-            } else if (option.equals("3")) {
-                // Edit Customer
-            } else if (option.equals("4")) {
-                // Add employee
-            } else if (option.equals("5")) {
-                // Edit Employee
-            } else if (option.equals("6")) {
-                // List View Report options
-                // while loop
-            } else if (option.equals("7")) {
-                break;
+        
+        while (option != "7"){
+            switch (option) {
+            // New Sale
+                case "1":
+                    break;
+            // Add customer
+                case "2":
+                    break;
+            // Edit Customer
+                case "3":
+                    break;
+            // Add employee
+                case "4":
+                    System.out.println("Added new Sales Person");
+                    menu.addSalesPerson();
+                    break;
+            // Edit Employee Commission rate
+                case "5":
+                    break;
+            // View Report
+                case "6":
+                    break;
+                default:
+                    break;
             }
+            menu.printMenu();
+            option = in.nextLine();
         }        
     }
 }//end FirstExample}
