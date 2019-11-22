@@ -2,8 +2,8 @@ CREATE TABLE customers (
     firstName           VARCHAR(20) NOT NULL, 
     lastName            VARCHAR(20) NOT NULL, 
     phoneNumber         VARCHAR(20), 
-    mailAddress         VARCHAR(20), 
-    deliveryAddress     VARCHAR(20), 
+    mailAddress         VARCHAR(50), 
+    deliveryAddress     VARCHAR(50), 
     CONSTRAINT customers_pk PRIMARY KEY (firstName, lastName) 
 );
 
@@ -12,7 +12,7 @@ CREATE TABLE employees (
     firstName           VARCHAR(20) NOT NULL, 
     lastName            VARCHAR(20) NOT NULL, 
     phoneNumber         VARCHAR(20) NOT NULL, 
-    address             VARCHAR(20) NOT NULL, 
+    address             VARCHAR(50) NOT NULL, 
     salary              INT NOT NULL, 
     commissionRate      INT NOT NULL, 
     CONSTRAINT employees_pk PRIMARY KEY (eID)
