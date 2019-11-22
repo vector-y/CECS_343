@@ -20,10 +20,10 @@ public class DBConnect {
     private static String DB_URL = "jdbc:derby://localhost:1527/";
     
    
+    Connection conn = null; //initialize the connection
+    Statement stmt = null;  //initialize the statement that we're using
     public Connection connect() {
         DB_URL = DB_URL + "BitsPlease;user=cecs343;password=cecs343";
-        Connection conn = null; //initialize the connection
-        Statement stmt = null;  //initialize the statement that we're using
         try {
             //STEP 2: Register JDBC driver
             Class.forName("org.apache.derby.jdbc.ClientDriver");
@@ -40,24 +40,24 @@ public class DBConnect {
             //Handle errors for Class.forName
             e.printStackTrace();
             return null;
-        } finally {
-            //finally block used to close resources
-            try {
-                if (stmt != null) {
-                    stmt.close();
-                }
-            } catch (SQLException se2) {
-                return null;
-            }// nothing we can do
-            try {
-                if (conn != null) {
-                    conn.close();
-                }
-            } catch (SQLException se) {
-                se.printStackTrace();
-                return null;
-            }//end finally try
-        }//end try
+        } 
+    }
+    public void closeConnection(){
+         try
+        {
+            if (stmt != null)
+            {
+                stmt.close();
+            }
+            if (conn != null)
+            {
+                DriverManager.getConnection(DB_URL + ";shutdown=true");
+                conn.close();
+            }           
+        }
+        catch (SQLException sqlExcept)
+        {
+        }
     }
     
     

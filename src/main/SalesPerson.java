@@ -6,6 +6,8 @@
 package main;
 
 import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
 /**
  *
  * @author mou lue huang
@@ -15,18 +17,10 @@ public class SalesPerson {
     Connection conn = dbConnection.connect();
     //Use Case 15
     //create a new salesperson to add to database
-    public SalesPerson(String name,String email, float comission_percent, int totalSales) {
-        /**while(name.length > "XXX"){
-            System.out.println("Please insert a name that is less than");
-        }**/
-        while(comission_percent < 0.0){
-            System.out.println("Please insert a comission_person that is greater than 0.0");
-        }
-        String[] name_split = name.split(" ");
-        String firstName = name_split[0];
-        String lastName = name_split[1];
-        
-        
+    static int eID = 1;
+    static int salary = 50000;
+    public SalesPerson(String firstName, String lastName, String phoneNum, String address, int commission){
+        insertSPToDatabase(eID,firstName,lastName,phoneNum,address,salary,commission);
         //check all Salespersons input and validate that primary key does not exist yet
         
         //query to add to salesperson database
@@ -50,5 +44,20 @@ public class SalesPerson {
         //asks for input of what salesperson you would like to delete
         //query to delete the salesperson
     }
-   
+
+    void insertSPToDatabase(int eID, String firstName, String lastName, String phoneNum, String address, int salary, int commission) {
+        Statement stmt;
+        try
+        {
+            stmt = conn.createStatement();
+            String insertNewSPSQL = String.format("INSERT INTO Employees(EID,FIRSTNAME,LASTNAME,PHONENUMBER,ADDRESS,SALARY,COMMISSIONRATE) values (%d,'%s','%s','%s','%s',%d,%d)", eID,firstName,lastName,phoneNum,address,salary,commission);
+            System.out.println(insertNewSPSQL);
+            stmt.executeUpdate(insertNewSPSQL);
+        }
+        catch (SQLException sqlExcept)
+        {
+            sqlExcept.printStackTrace();
+        }
+    }
+    
 }
