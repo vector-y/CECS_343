@@ -15,6 +15,7 @@ CREATE TABLE employees (
     address             VARCHAR(20) NOT NULL, 
     salary              INT NOT NULL, 
     commissionRate      INT NOT NULL, 
+    totalCommission     INT NOT NULL, 
     CONSTRAINT employees_pk PRIMARY KEY (eID)
 );
 
@@ -49,5 +50,6 @@ CREATE TABLE products (
     MSRP                DECIMAL(10, 2) NOT NULL, 
     buyPrice            DECIMAL(10, 2) NOT NULL, 
     quantityInStock     INT NOT NULL, 
+    profit              DECIMAL(10, 2) NOT NULL, 
     CONSTRAINT products_pk PRIMARY KEY (productNumber)
 );
