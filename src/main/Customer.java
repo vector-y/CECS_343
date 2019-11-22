@@ -12,8 +12,9 @@ import java.sql.*;
  * @author cnaei
  */
 public class Customer {
-    Connection conn;
-
+    DBConnect dbConnection = new DBConnect();
+    Connection conn = dbConnection.connect();
+    
     /**
      * Default constructor for customer. Inserts the customer data into the database. 
      * @param connect - Connection to the database.
@@ -23,25 +24,28 @@ public class Customer {
      * @param mail - Mail address of the customer.
      * @param delivery - Delivery address of the customer.
      */
-    public Customer(Connection connect, String firstName, String lastName, String phone, String mail, String delivery) throws SQLException {
-        this.conn = connect;
-        if (!firstName.isEmpty() && !lastName.isEmpty()) {
-            String query = "INSERT INTO customers (firstName, lastName, phoneNumber, mailAddress, deliveryAddress) VALUES (?,?,?,?,?)";
-            try {
-                PreparedStatement customer = conn.prepareStatement(query);
-                customer.setString(1, firstName); //set values for newBook
-                customer.setString(2, lastName);
-                customer.setString(3, phone);
-                customer.setString(4, mail);
-                customer.setString(5, delivery);
-                customer.executeUpdate();
+    public Customer(String firstName, String lastName, String phone, String mail, String delivery) {
+        try {
+            if (!firstName.isEmpty() && !lastName.isEmpty()) {
+                String query = "INSERT INTO customers (firstName, lastName, phoneNumber, mailAddress, deliveryAddress) VALUES (?,?,?,?,?)";
+                try {
+                    PreparedStatement customer = conn.prepareStatement(query);
+                    customer.setString(1, firstName); //set values for newBook
+                    customer.setString(2, lastName);
+                    customer.setString(3, phone);
+                    customer.setString(4, mail);
+                    customer.setString(5, delivery);
+                    customer.executeUpdate();
 
-            } catch (SQLIntegrityConstraintViolationException exception) {
-                System.out.println("Error: Data already exists in the record"); //error: duplicate data 
-            }
-        } else {
-            System.out.println("ERROR: Please enter in first name and last name.");
-        } 
+                } catch (SQLIntegrityConstraintViolationException exception) {
+                    System.out.println("Error: Data already exists in the record"); //error: duplicate data 
+                }
+            } else {
+                System.out.println("ERROR: Please enter in first name and last name.");
+            } 
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
  
     

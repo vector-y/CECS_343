@@ -52,6 +52,8 @@ public class main {
                     break;
             // Add customer
                 case "2":
+                    menu.addCustomer();
+                    System.out.println("Successfully Added New Customer");
                     break;
             // Edit Customer
                 case "3":
@@ -66,7 +68,7 @@ public class main {
                     break;
             //add new SalesPerson
                 case "7":
-                    System.out.println("Added new Sales Person");
+                    System.out.println("Successfully Added New Sales Person");
                     menu.addSalesPerson();
                     break;
                 default:
