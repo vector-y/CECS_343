@@ -45,7 +45,7 @@ public class main {
         menu.printMenu();
         String option = in.nextLine();
         
-        while (option != "8"){
+        while (option != "7"){
             switch (option) {
             // New Sale
                 case "1":
@@ -60,10 +60,13 @@ public class main {
                     break;
             // Add employee
                 case "4":
+                    System.out.println("Added new Sales Person");
+                    menu.addSalesPerson();
                     break;
-            // Edit Employee
+            // Edit Employee Commission rate
                 case "5":
                     break;
+            // View Report
                 case "6":
                     break;
             //add new SalesPerson
