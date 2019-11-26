@@ -66,4 +66,21 @@ public class Menu {
         int commission = input.nextInt(); 
         SalesPerson sp = new SalesPerson(firstName,lastName,phoneNum,address,commission);
     }
+    
+    void addCustomer() {
+        Scanner console = new Scanner(System.in);
+        System.out.println("Please enter all fields for new customer:");
+        System.out.print("First Name: ");
+        String firstName = console.nextLine();
+        System.out.print("Last Name");
+        String lastName = console.nextLine();
+        System.out.print("Phone Number:");
+        String phoneNumber = console.nextLine();
+        System.out.println("Mail Address:");
+        String mail = console.nextLine();
+        System.out.println("Delivery Address:");
+        String delivery = console.nextLine();
+        Customer cust = new Customer(firstName, lastName, phoneNumber, mail, delivery);
+    }
+    
 }
