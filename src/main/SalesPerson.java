@@ -69,7 +69,60 @@ public final class SalesPerson {
     //display total Sales
     private void displayTotalSales(String firstName, String lastName){
         //query to check for the name
+        int ID = getID(firstName,lastName);
         
+        Statement stmt = null;
+        ResultSet rs = null;
+        
+        try {
+            stmt = conn.createStatement();
+            String salesPersonSQL = "SELECT COUNT(salesRepID) AS totalSales FROM Orders" + "WHERE salesRepID = " + ID;
+            rs = stmt.executeQuery(salesPersonSQL);
+            
+            //loop through database and see if the user input's salesperson's name exists or not
+            //if exists, set the flag to be true
+            while (rs.next()) {
+               int totalSales = rs.getInt("totalSales");
+               System.out.println(firstName + " " + lastName + "has made" + totalSales + "total Sales");
+            }
+            rs.close();
+            stmt.close();
+            
+        } 
+        catch (SQLException sqlExcept)
+        {
+            sqlExcept.printStackTrace();
+        }
+    }
+    private int getID(String firstName, String lastName){
+        Statement stmt = null;
+        ResultSet rs = null;
+        try {
+            stmt = conn.createStatement();
+            String salesPersonSQL = "SELECT * FROM EMPLOYEES";
+            rs = stmt.executeQuery(salesPersonSQL);
+            
+            //loop through database and see if the user input's salesperson's name exists or not
+            //if exists, set the flag to be true
+            while (rs.next()) {
+                int employeeID = rs.getInt("EID");
+                String first_name = rs.getString("FIRSTNAME");
+                String last_name = rs.getString("LASTNAME");
+                //i_first/lastname is the name we can return true
+                if (firstName.equals(first_name) && lastName.equals(last_name)) {
+                    return employeeID;
+                }
+            }
+            rs.close();
+            stmt.close();
+            return -1;
+            
+        } 
+        catch (SQLException sqlExcept)
+        {
+            sqlExcept.printStackTrace();
+        }
+        return -1;
     }
     boolean checkSalesPerson(String i_firstName, String i_lastName){
         Statement stmt = null;
