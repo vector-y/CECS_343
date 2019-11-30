@@ -8,15 +8,24 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Scanner;
 import java.sql.Connection;
+import java.sql.Date;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.sql.Statement;
+import java.sql.Time;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /** @author victor
  */
-public class invoice {
+public class Invoice {    
+    private static int ORDERNUMBER = 0;
+
     DBConnect dbConnection = new DBConnect();
     Connection conn = dbConnection.connect();
     
@@ -27,10 +36,14 @@ public class invoice {
     private float invoiceCharge;
     private int deliveryCharge;
     private float invoiceDiscount;
-    private ArrayList<String> listOfItems;
+//    private ArrayList<String> listOfItems;
     private ArrayList<String> invoiceState;
+    private Map<String, Integer> items;
     static Scanner in = new Scanner(System.in);
-    
+    Date now;
+    Time time;
+    private String firstName;
+    private String lastName;
     public static void main(String[] args) {
 
     }
@@ -47,9 +60,20 @@ public class invoice {
         bool state : A list of services provided
         Date dateSold : The date of when the invoice first started
     */
-    public invoice(double totalDue, double totalPaid, int paymentCount, int dayCount, float invoiceCharge, int deliveryCharge, float invoiceDiscount, ArrayList<String> listOfItems, ArrayList<String> invoiceState) {
+    public Invoice(double totalDue, double totalPaid, int paymentCount, int dayCount, float invoiceCharge, int deliveryCharge, float invoiceDiscount, ArrayList<String> listOfItems, ArrayList<String> invoiceState) {
         insertInvoiceToDatabase(totalDue,totalPaid,paymentCount,dayCount,invoiceCharge,deliveryCharge,invoiceDiscount,listOfItems,invoiceState);
     }
+
+    Invoice(Date now, Time time, String firstName, String lastName) {
+        this.now = now;
+        this.time = time;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        items = new HashMap<String, Integer>();
+
+//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
     /*
         this.totalDue = totalDue;
         this.totalPaid = totalPaid;
@@ -64,7 +88,7 @@ public class invoice {
     */
     
     public void invoiceMenu(){
-        System.out.println("	(1) Purchase an electronic");
+        System.out.println("	(1) Add an electronic");
         System.out.println("	(2) End the sale");
     }
     
@@ -84,29 +108,37 @@ public class invoice {
     /* To add an invoice for a new order. */
     public void addNewInvoice(){
         boolean saleOver = false;
+        int choice;
         while(saleOver == false){
             invoiceMenu();
-            int choice;
             choice = menu(Integer.parseInt(in.nextLine()));
+            System.out.println("input is..." + choice);
             switch(choice){
                 case 1:
                     newElectronicOrder();
+                    break;
                 case 2:
+                    System.out.println("What you have purchased...");
+                    for(Map.Entry<String, Integer> electronic : items.entrySet()){
+                        System.out.println(electronic.getKey());
+                    }
                     System.out.println("Do you need it delivered? (Y/N)");
-                    String delivery = in.nextLine();
-                    if(delivery.equals('Y') || delivery.equals('y')){
-                        totalDue = getTotal();
+                    String delivery = in.nextLine().toUpperCase().trim();
+                    if(delivery.equals("Y")){
+                        ORDERNUMBER += 1;
+                        totalDue = finalizeSale(delivery);
                         totalDue += deliveryCharge;
                         String orderSummary = String.format("Here's the total due: %f", totalDue);
                         System.out.println(orderSummary);
                         System.out.println("Thanks for shopping with us!");
-                    }
-                    else if(delivery.equals('N') || delivery.equals('n')){
+                    } else if(delivery.equals("N")){
+                        totalDue = finalizeSale(delivery);
                         String orderSummary = String.format("Here's the total due: %f", totalDue);
                         System.out.println(orderSummary);
                         System.out.println("Thanks for shopping with us!");
                     }
                     saleOver = true;
+                    break;
             }
         }
     }
@@ -133,6 +165,8 @@ public class invoice {
         }
     }
     
+    
+    
     //query to add new deliveryAddress into database
     void insertDeliveryToDatabase(String address, String city, String zipCode) {
         Statement stmt;
@@ -151,38 +185,43 @@ public class invoice {
     }
     
     public void newElectronicOrder(){
-        listOfItems = new ArrayList<String>();
+//        listOfItems = new ArrayList<String>();        
+
         electronicMenu();
         int choice;
         choice = menu(Integer.parseInt(in.nextLine()));
         switch(choice) {
             case 1:
-                listOfItems.add("AirPods Pro");
+//                listOfItems.add("AirPods Pro");
+                addItem("AirPods Pro");
             case 2:
-                listOfItems.add("Surface Pro X");
+//                listOfItems.add("Surface Pro X");
+                addItem("Surface Pro X");
             case 3:
-                listOfItems.add("Macbook Pro");
+//                listOfItems.add("Macbook Pro");
+                addItem("Macbook Pro");
             case 4:
-                listOfItems.add("Google Nest Wifi");
+                addItem("Google Nest Wifi");
             case 5:
-                listOfItems.add("Bose Noise Cancelling Headphones 700");
+                addItem("Bose Noise Cancelling Headphones 700");
             case 6:
-                listOfItems.add("Google Pixel 4");
+                addItem("Google Pixel 4");
             case 7:
-                listOfItems.add("iPhone 11 Pro");
+                addItem("iPhone 11 Pro");
             case 8:
-                listOfItems.add("Galaxy Note 10");
+                addItem("Galaxy Note 10");
             case 9:
-                listOfItems.add("Amazon Fire TV Stick");
+                addItem("Amazon Fire TV Stick");
             case 10:
-                listOfItems.add("Samsung Smart TV 4K with HDR");
+                addItem("Samsung Smart TV 4K with HDR");
         }
     }
     
     public double getTotal(){
         double totalDue = 0;
-        for(String electronic : listOfItems){
-            totalDue += getCost(electronic);
+        for(Map.Entry<String, Integer> electronic : items.entrySet()){
+            
+            totalDue += (getCost(electronic.getKey()) * electronic.getValue());
         }
         return totalDue;
     }
@@ -227,7 +266,8 @@ public class invoice {
     }
     
     public void add(String s){
-        listOfItems.add(s);
+//        listOfItems.add(s);
+        
     }
     
     public String addDeliveryInfo(){
@@ -326,6 +366,93 @@ public class invoice {
         return orderSummary;
     }
     
+    private void addItem(String item) {
+        if (items.containsKey(item)) {
+            items.put(item, items.get(item) + 1);
+        } else {
+            items.put(item, 1);
+        }
+    }
+    
+    public double finalizeSale(String delivery) {
+        // Entering data into Orders
+        System.out.println("Finalizing sale...");
+        String query = "INSERT INTO orders (orderNumber, firstName, lastName, delivery, orderDate, orderTime, salesRepID) VALUES (?,?,?,?,?,?,?)";
+        try {
+            PreparedStatement orders = conn.prepareStatement(query);
+            
+            orders.setInt(1, ORDERNUMBER); //set values for newBook
+            orders.setString(2, firstName);
+            orders.setString(3, lastName);
+            orders.setString(4, delivery);
+            orders.setDate(5, Date.valueOf(now.toString()));
+            orders.setTime(6, time);
+            orders.setInt(7, 1); // NEED TO LINK --------------------------
+            orders.executeUpdate(); 
+            
+            for(Map.Entry<String, Integer> electronic : items.entrySet()){
+                query = "INSERT INTO orderDetails (orderNumber, productName, quantity, priceEach) VALUES (?,?,?,?)";
+                PreparedStatement orderDetails = conn.prepareStatement(query);
+                orderDetails.setInt(1, ORDERNUMBER);
+                orderDetails.setString(2, electronic.getKey());
+                orderDetails.setInt(3, electronic.getValue());
+                orderDetails.setDouble(4, getCost(electronic.getKey()));
+            }
+            
+            // To calculate total due.
+            query = "SELECT SUM(quantity * priceEach) AS total FROM orderDetails WHERE orderNumber = " + ORDERNUMBER + " GROUP BY orderNumber";
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            while (rs.next()) {
+                this.totalDue = rs.getInt("total");
+            }
+        } catch (SQLException e) {
+            System.out.println("ERROR in finalizing sale.");
+            e.printStackTrace();
+        }
+        return this.totalDue;
+    }
+    
+    public String getTable(String query) {
+        Statement stmt = null;
+        String table = "";
+        String label = "";
+        int columnSize = 0;
+        int column = 0;
+        try {
+            // To list the column labels.
+            stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            ResultSetMetaData rsmd = rs.getMetaData();
+            column = rsmd.getColumnCount();
+            
+            for (int i = 1; i <= column; i++) {
+                label = rsmd.getColumnName(i);
+                columnSize = rsmd.getColumnDisplaySize(i); // Each column may have a different length
+                table += String.format("%-" + columnSize + "s", label); // To format by column size from left.
+            }
+            table += "\n";
+            // To store all the rows with format. 
+            if (!rs.next()) {
+                return "No Data. Please ensure you entered data correctly.";
+            } else {
+                do {
+                    for (int i = 1; i <= column; i++) {
+                        columnSize = rsmd.getColumnDisplaySize(i);
+                        table += String.format("%-" + columnSize + "s", rs.getString(i));
+                    }
+                    table += "\n";
+                } while (rs.next());
+            }
+        } catch (SQLException se) {
+            //Handle errors for JDBC
+            se.printStackTrace();
+        } catch (Exception e) {
+            //Handle errors for Class.forName
+            e.printStackTrace();
+        }
+        return table;
+    }
 }
 /*
  String orderSummary = "";//string for all sales
