@@ -6,6 +6,7 @@
 package main;
 
 import java.sql.*;
+import java.util.Arrays;
 
 /**
  *
@@ -15,6 +16,9 @@ public class Customer {
     DBConnect dbConnection = new DBConnect();
     Connection conn = dbConnection.connect();
     
+    public Customer() {
+        
+    }
     /**
      * Default constructor for customer. Inserts the customer data into the database. 
      * @param connect - Connection to the database.
@@ -47,7 +51,6 @@ public class Customer {
             e.printStackTrace();
         }
     }
- 
     
     
     public void getCustomer(String firstName, String lastName) {
@@ -94,5 +97,25 @@ public class Customer {
             e.printStackTrace();
         }
         return table;
+    }
+    
+    public boolean isValidCustomer(String fName, String lName) {
+        String query = "SELECT firstName, lastName FROM customers WHERE firstName = '" + fName + "' AND lastName = '" + lName + "'";
+        String firstName = "";
+        String lastName = "";
+        Statement stmt = null;
+        try {
+            stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+
+            while (rs.next()) {
+                firstName = rs.getString("firstName");
+                lastName = rs.getString("lastName");
+            }
+        } catch (Exception e) {
+            //Handle errors for Class.forName
+            e.printStackTrace();
+        }
+        return firstName.equals(fName) && lastName.equals(lName);
     }
 }

@@ -49,6 +49,7 @@ public class main {
             switch (option) {
             // New Sale
                 case "1":
+                    menu.newSale();
                     break;
             // Add customer
                 case "2":
@@ -57,6 +58,7 @@ public class main {
                     break;
             // Edit Customer
                 case "3":
+                    
                     break;
             // Add employee
                 case "4":
