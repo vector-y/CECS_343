@@ -5,6 +5,9 @@
  */
 package main;
 
+
+import java.sql.Date;
+import java.sql.Time;
 import java.util.Scanner;
 
 /**
@@ -12,6 +15,8 @@ import java.util.Scanner;
  * @author blahb
  */
 public class Menu {
+    
+
     public Menu (){}
     void printMenu(){
          System.out.println("Main Menu");
@@ -66,4 +71,50 @@ public class Menu {
         int commission = input.nextInt(); 
         SalesPerson sp = new SalesPerson(firstName,lastName,phoneNum,address,commission);
     }
+    
+    void addCustomer() {
+        Scanner console = new Scanner(System.in);
+        System.out.println("Please enter all fields for new customer:");
+        System.out.print("First Name: ");
+        String firstName = console.nextLine();
+        System.out.print("Last Name: ");
+        String lastName = console.nextLine();
+        System.out.print("Phone Number: ");
+        String phoneNumber = console.nextLine();
+        System.out.println("Mail Address: ");
+        String mail = console.nextLine();
+        System.out.println("Delivery Address: ");
+        String delivery = console.nextLine();
+        Customer cust = new Customer(firstName, lastName, phoneNumber, mail, delivery);
+    }
+    
+    void newSale() {
+        Scanner console = new Scanner(System.in);
+        Boolean isValid = true;            
+        Customer c = new Customer();
+        System.out.print("Enter Customer's First Name: ");
+        String firstName = console.nextLine();
+        System.out.print("Enter Customer's Last Name: ");
+        String lastName = console.nextLine();
+
+        // Verifying if customer exists
+        isValid = c.isValidCustomer(firstName, lastName);
+        if (!isValid) {
+            System.out.println("Customer not found. ");
+            System.out.println("Exiting sale.  Please add new customer first.");
+            return;
+        } else {
+            System.out.println("Found Customer.");
+        }
+        long millis=System.currentTimeMillis();  
+        Date today = new Date(millis);
+        Time time = new java.sql.Time(today.getTime());
+
+        
+        //Starting sale prompt
+        Invoice sale = new Invoice(today, time, firstName, lastName);
+        sale.addNewInvoice();
+        
+    }
+    
 }

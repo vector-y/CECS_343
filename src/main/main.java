@@ -49,12 +49,16 @@ public class main {
             switch (option) {
             // New Sale
                 case "1":
+                    menu.newSale();
                     break;
             // Add customer
                 case "2":
+                    menu.addCustomer();
+                    System.out.println("Successfully Added New Customer");
                     break;
             // Edit Customer
                 case "3":
+                    
                     break;
             // Add employee
                 case "4":
@@ -66,6 +70,11 @@ public class main {
                     break;
             // View Report
                 case "6":
+                    break;
+            //add new SalesPerson
+                case "7":
+                    System.out.println("Successfully Added New Sales Person");
+                    menu.addSalesPerson();
                     break;
                 default:
                     break;

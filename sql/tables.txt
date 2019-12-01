@@ -2,8 +2,8 @@ CREATE TABLE customers (
     firstName           VARCHAR(20) NOT NULL, 
     lastName            VARCHAR(20) NOT NULL, 
     phoneNumber         VARCHAR(20), 
-    mailAddress         VARCHAR(20), 
-    deliveryAddress     VARCHAR(20), 
+    mailAddress         VARCHAR(50), 
+    deliveryAddress     VARCHAR(50), 
     CONSTRAINT customers_pk PRIMARY KEY (firstName, lastName) 
 );
 
@@ -12,9 +12,10 @@ CREATE TABLE employees (
     firstName           VARCHAR(20) NOT NULL, 
     lastName            VARCHAR(20) NOT NULL, 
     phoneNumber         VARCHAR(20) NOT NULL, 
-    address             VARCHAR(20) NOT NULL, 
+    address             VARCHAR(50) NOT NULL, 
     salary              INT NOT NULL, 
     commissionRate      INT NOT NULL, 
+    totalCommission     INT NOT NULL, 
     CONSTRAINT employees_pk PRIMARY KEY (eID)
 );
 
@@ -27,8 +28,8 @@ CREATE TABLE orders (
     orderDate       DATE NOT NULL,
     orderTime       TIME NOT NULL,
     salesRepID      INT NOT NULL, 
-    balance         INT NOT NULL,
-    CONSTRAINT orders_fk PRIMARY KEY (orderNumber), 
+--     balance         INT NOT NULL, ---- This is a derivable attribute
+    CONSTRAINT orders_pk PRIMARY KEY (orderNumber), 
     CONSTRAINT orders_fk1 FOREIGN KEY (firstName, lastName) REFERENCES customers (firstName, lastName), 
     CONSTRAINT orders_fk2 FOREIGN KEY (salesRepID) REFERENCES employees (eID)
 );
@@ -49,5 +50,10 @@ CREATE TABLE products (
     MSRP                DECIMAL(10, 2) NOT NULL, 
     buyPrice            DECIMAL(10, 2) NOT NULL, 
     quantityInStock     INT NOT NULL, 
+    profit              DECIMAL(10, 2) NOT NULL, 
     CONSTRAINT products_pk PRIMARY KEY (productNumber)
 );
+
+-- For testing
+insert into employees (eID,firstName,lastName,phoneNumber,address,salary,commissionRate,totalCommission) 
+values (1, 'Some', 'Employee', '234-342-2349', '234 test road', 45, 2, 3);
