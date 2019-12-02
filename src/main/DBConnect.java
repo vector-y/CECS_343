@@ -7,8 +7,7 @@ package main;
 import java.sql.*;
 
 /**
- *
- * @author cnaei
+ * Database Connection class 
  */
 public class DBConnect {
     private static Connection connection = null;
@@ -18,10 +17,14 @@ public class DBConnect {
     private static final String displayFormat="%-5s%-15s%-15s%-15s\n";
     private static final String JDBC_DRIVER = "org.apache.derby.jdbc.ClientDriver";
     private static String DB_URL = "jdbc:derby://localhost:1527/";
-    
    
-    Connection conn = null; //initialize the connection
-    Statement stmt = null;  //initialize the statement that we're using
+    Connection conn = null; 
+    Statement stmt = null; 
+    
+    /**
+     * Connection class that returns the connection. 
+     * @return connection
+     */
     public Connection connect() {
         DB_URL = DB_URL + "BitsPlease;user=cecs343;password=cecs343";
         try {
@@ -40,6 +43,10 @@ public class DBConnect {
             return null;
         } 
     }
+    
+    /**
+     * To close the connection.
+     */
     public void closeConnection(){
          try
         {
@@ -53,8 +60,8 @@ public class DBConnect {
                 conn.close();
             }           
         }
-        catch (SQLException sqlExcept)
-        {
+        catch (SQLException sqlExcept) {
+            System.out.println("ERROR: Database connection close failed.");
         }
     }
 }
