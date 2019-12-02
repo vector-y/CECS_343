@@ -34,6 +34,14 @@ CREATE TABLE orders (
     CONSTRAINT orders_fk2 FOREIGN KEY (salesRepID) REFERENCES employees (eID)
 );
 
+CREATE TABLE payments (
+    customerFirstName   VARCHAR(20) NOT NULL,
+    customerLastName    VARCHAR(20) NOT NULL, 
+    orderNumber         INT NOT NULL, 
+    paymentDate         DATE NOT NULL, 
+    amount              DECIMAL(10,2) NOT NULL,
+    CONSTRAINT payments_pk PRIMARY KEY (customerFirstName, customerLastName, orderNumber)
+);
 
 CREATE TABLE orderDetails (
     orderNumber     INTEGER NOT NULL, 
@@ -54,6 +62,12 @@ CREATE TABLE products (
     CONSTRAINT products_pk PRIMARY KEY (productNumber)
 );
 
+
+CREATE TABLE password (
+    password    VARCHAR(20) NOT NULL,
+    master      VARCHAR(1) NOT NULL,
+    CONSTRAINT password_pk PRIMARY KEY (password)
+);
 -- For testing
 insert into employees (eID,firstName,lastName,phoneNumber,address,salary,commissionRate,totalCommission) 
 values (1, 'Some', 'Employee', '234-342-2349', '234 test road', 45, 2, 3);
