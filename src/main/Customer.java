@@ -37,9 +37,10 @@ public class Customer {
                     customer.setString(4, mail);
                     customer.setString(5, delivery);
                     customer.executeUpdate();
+                    System.out.println("\nSuccessfully Added New Customer");
 
                 } catch (SQLIntegrityConstraintViolationException exception) {
-                    System.out.println("Error: Data already exists in the record"); //error: duplicate data 
+                    System.out.println("Error: Customer already exists in the record"); //error: duplicate data 
                 }
             } else {
                 System.out.println("ERROR: Please enter in first name and last name.");

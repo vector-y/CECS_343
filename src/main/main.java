@@ -55,7 +55,6 @@ public class main {
             // Add customer
                 case "2":
                     menu.addCustomer();
-                    System.out.println("\nSuccessfully Added New Customer");
                     break;
             // Add employee
                 case "3":
