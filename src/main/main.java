@@ -31,7 +31,7 @@ public class main {
             return input;
     }
     
-    public static void main(String[] args) {
+     public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
 
         System.out.println(">> Welcome to initial setup!  Please enter the password you would like to set as. <<");
@@ -62,7 +62,6 @@ public class main {
                     break;
             // Add employee
                 case "4":
-                    System.out.println("Added new Sales Person");
                     menu.addSalesPerson();
                     break;
             // View Employee Information
@@ -71,10 +70,6 @@ public class main {
                     break;
             // View Report
                 case "6":
-                    break;
-            //add new SalesPerson
-                case "7":
-                    menu.addSalesPerson();
                     break;
                 default:
                     break;
