@@ -400,7 +400,8 @@ public class Invoice {
             }
             
             // To calculate total due.
-            query = "SELECT SUM(quantity * priceEach) AS total FROM orderDetails WHERE orderNumber = " + ORDERNUMBER + " GROUP BY orderNumber";
+            query = "SELECT SUM(priceEach * quantity) total FROM orderdetails INNER JOIN orders USING (ordernumber) WHERE ordernumber = "
+                    + ORDERNUMBER + "group by ordernumber";
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(query);
             while (rs.next()) {
