@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package main;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Scanner;
@@ -166,25 +167,34 @@ public class Invoice {
         switch(choice) {
             case 1:
                 addItem("AirPods Pro");
+                break;
             case 2:
                 addItem("Surface Pro X");
+                break;
             case 3:
-//                listOfItems.add("Macbook Pro");
                 addItem("Macbook Pro");
+                break;
             case 4:
                 addItem("Google Nest Wifi");
+                break;
             case 5:
                 addItem("Bose Noise Cancelling Headphones 700");
+                break;
             case 6:
                 addItem("Google Pixel 4");
+                break;
             case 7:
                 addItem("iPhone 11 Pro");
+                break;
             case 8:
                 addItem("Galaxy Note 10");
+                break;
             case 9:
                 addItem("Amazon Fire TV Stick");
+                break;
             case 10:
                 addItem("Samsung Smart TV 4K with HDR");
+                break;
         }
     }
     
@@ -377,22 +387,26 @@ public class Invoice {
             orders.setInt(7, 1); // NEED TO LINK --------------------------
             orders.executeUpdate(); 
             
+            query = "INSERT INTO orderDetails (orderNumber, productName, quantity, priceEach) VALUES (?,?,?,?)";
             for(Map.Entry<String, Integer> electronic : items.entrySet()){
-                query = "INSERT INTO orderDetails (orderNumber, productName, quantity, priceEach) VALUES (?,?,?,?)";
+                System.out.println(ORDERNUMBER + " " + electronic.getKey() + " " + electronic.getValue() + " " + getCost(electronic.getKey()));
                 PreparedStatement orderDetails = conn.prepareStatement(query);
                 orderDetails.setInt(1, ORDERNUMBER);
                 orderDetails.setString(2, electronic.getKey());
                 orderDetails.setInt(3, electronic.getValue());
                 orderDetails.setDouble(4, getCost(electronic.getKey()));
+                orderDetails.executeUpdate();
             }
             
             // To calculate total due.
-            query = "SELECT SUM(priceEach * quantity) total FROM orderdetails INNER JOIN orders USING (ordernumber) WHERE ordernumber = "
-                    + ORDERNUMBER + "group by ordernumber";
+            query = "SELECT SUM(priceEach * quantity) total FROM orderDetails INNER JOIN orders USING (orderNumber) WHERE orderNumber = "
+                    + ORDERNUMBER + " group by ordernumber";
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(query);
+            System.out.println(query);
+            System.out.println(getTable(query));
             while (rs.next()) {
-                this.totalDue = rs.getInt("total");
+                this.totalDue = rs.getDouble("total");
             }
         } catch (SQLException e) {
             System.out.println("ERROR in finalizing sale.");
