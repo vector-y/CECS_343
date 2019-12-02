@@ -24,7 +24,7 @@ public class Menu {
                         + "2. Add Customer\n"
                         + "3. Edit Customer\n"
                         + "4. Add Employee\n"
-                        + "5. Edit Employee\n"
+                        + "5. View Employee Info\n"
                         + "6. View Report\n"
                         + "7. Add SalesPerson\n"
                         + "8. Exit\n";

@@ -65,7 +65,7 @@ public class main {
                     System.out.println("Added new Sales Person");
                     menu.addSalesPerson();
                     break;
-            // Edit Employee Commission rate
+            // View Employee Information
                 case "5":
                     break;
             // View Report
