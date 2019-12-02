@@ -33,10 +33,9 @@ public class main {
     
      public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
-
+        
         System.out.println(">> Welcome to initial setup!  Please enter the password you would like to set as. <<");
         
-        System.out.println("Name of the database (not the user account): ");
         MASTERPASSWORD = in.nextLine().trim();
         
         System.out.println("Great! Let's log you on...");
