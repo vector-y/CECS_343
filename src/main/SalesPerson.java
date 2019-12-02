@@ -67,7 +67,7 @@ public final class SalesPerson {
     }
     //Use Case 9
     //display total Sales
-    private void displayTotalSales(String firstName, String lastName){
+    void displayTotalSales(String firstName, String lastName){
         //query to check for the name
         int ID = getID(firstName,lastName);
         
