@@ -26,8 +26,7 @@ public class Menu {
                         + "4. Add Employee\n"
                         + "5. View Employee Info\n"
                         + "6. View Report\n"
-                        + "7. Add SalesPerson\n"
-                        + "8. Exit\n";
+                        + "7. Exit\n";
          System.out.println(menu); 
     }
     void displayEmployeeInfoMenu(){
@@ -36,40 +35,52 @@ public class Menu {
         System.out.println("View Employee Info Menu");
         String menu =    "1. Display Total Sales\n"
                        + "2. Display Total Commission\n"
-                       + "3. Exit\n";
+                       + "3. Exit";
         System.out.println(menu);
+        String option = in.nextLine();
+        
         String firstName = "";
         String lastName = "";
-        String option = in.nextLine();
-        if (option != "3"){
-            System.out.println("Please enter your sale person's first name(max: 20 characters)");
-            firstName = in.nextLine();
-            while (firstName.length() > 20) {
-                System.out.println("Please enter your sale person's first name(max: 20 characters)");
-                firstName = in.nextLine();
-            }
-        
-            System.out.println("Please enter your sale person's last name(max: 20 characters)");
-            lastName = in.nextLine();
-            while (lastName.length() > 20) {
-                System.out.println("Please enter your sale person's last name(max: 20 characters)");
-                lastName = in.nextLine();
-            }        
-        }
-        
         SalesPerson sp = new SalesPerson();
         while (option != "3"){
             switch (option) {
             // Display Total Sales
                 case "1":
+                    firstName = getFirstName();
+                    lastName = getLastName();
                     sp.displayTotalSales(firstName, lastName);
                     break;
             // Add customer
                 case "2":
+                    firstName = getFirstName();
+                    lastName = getLastName();
                     sp.displayTotalCommission(firstName, lastName);
                     break;
+                   
             }
+            System.out.println(menu);
+            option = in.nextLine();
         }
+    }
+    private String getFirstName(){
+        Scanner input = new Scanner(System.in);
+        System.out.println("Please enter your sale person's first name(max: 20 characters)");
+        String firstName = input.nextLine();
+        while (firstName.length() > 20) {
+            System.out.println("Please enter your sale person's first name(max: 20 characters)");
+            firstName = input.nextLine();
+        }
+        return firstName;
+    }
+    private String getLastName(){
+        Scanner input = new Scanner(System.in);
+        System.out.println("Please enter your sale person's last name(max: 20 characters)");
+        String lastName = input.nextLine();
+        while (lastName.length() > 20) {
+            System.out.println("Please enter your sale person's last name(max: 20 characters)");
+            lastName = input.nextLine();
+        }
+        return lastName;
     }
     void addSalesPerson(){
         Scanner input = new Scanner(System.in);

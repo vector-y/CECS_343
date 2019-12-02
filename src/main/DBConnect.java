@@ -27,7 +27,6 @@ public class DBConnect {
         try {
             //STEP 2: Register JDBC driver
             Class.forName("org.apache.derby.jdbc.ClientDriver");
-            
             //STEP 3: Open a connection
             System.out.println("Creating Profile...");
             conn = DriverManager.getConnection(DB_URL);
