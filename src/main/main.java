@@ -67,6 +67,7 @@ public class main {
                     break;
             // View Employee Information
                 case "5":
+                    menu.displayEmployeeInfoMenu();
                     break;
             // View Report
                 case "6":

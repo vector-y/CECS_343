@@ -30,6 +30,47 @@ public class Menu {
                         + "8. Exit\n";
          System.out.println(menu); 
     }
+    void displayEmployeeInfoMenu(){
+        
+        Scanner in = new Scanner(System.in);
+        System.out.println("View Employee Info Menu");
+        String menu =    "1. Display Total Sales\n"
+                       + "2. Display Total Commission\n"
+                       + "3. Exit\n";
+        System.out.println(menu);
+        String firstName = "";
+        String lastName = "";
+        String option = in.nextLine();
+        if (option != "3"){
+            System.out.println("Please enter your sale person's first name(max: 20 characters)");
+            firstName = in.nextLine();
+            while (firstName.length() > 20) {
+                System.out.println("Please enter your sale person's first name(max: 20 characters)");
+                firstName = in.nextLine();
+            }
+        
+            System.out.println("Please enter your sale person's last name(max: 20 characters)");
+            lastName = in.nextLine();
+            while (lastName.length() > 20) {
+                System.out.println("Please enter your sale person's last name(max: 20 characters)");
+                lastName = in.nextLine();
+            }        
+        }
+        
+        SalesPerson sp = new SalesPerson();
+        while (option != "3"){
+            switch (option) {
+            // Display Total Sales
+                case "1":
+                    sp.displayTotalSales(firstName, lastName);
+                    break;
+            // Add customer
+                case "2":
+                    sp.displayTotalCommission(firstName, lastName);
+                    break;
+            }
+        }
+    }
     void addSalesPerson(){
         Scanner input = new Scanner(System.in);
         
