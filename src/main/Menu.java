@@ -24,9 +24,10 @@ public class Menu {
         String menu =    "1. New Sale\n"
                         + "2. Add Customer\n"
                         + "3. Add Employee\n"
-                        + "4. View Employee Info\n"
-                        + "5. View Report\n"
-                        + "6. Exit\n";
+                        + "4. View/Edit Items\n"
+                        + "5. View Employee Info\n"
+                        + "6. View Report\n"
+                        + "7. Exit\n";
         System.out.print(menu + "\n>> "); 
     }
     void displayEmployeeInfoMenu(){
@@ -154,4 +155,50 @@ public class Menu {
         
     }
     
+       void displayItemSubmenu()
+    {
+        Scanner in = new Scanner(System.in);
+        System.out.println("View Item Menu");
+        String menu =    "1. Display Items\n"
+                       + "2. Display Items fewer than 5 in inventory\n"
+                       + "3. Add Item Quantity"
+                       + "4. Remove Item Quantity\n"
+                       + "5. Change Item's Quantity"
+                       + "6. Change Item's Selling Price\n"
+                       + "7. Change Item's Cost Price"
+                       + "8. Exit";
+        System.out.println(menu);
+        String option = in.nextLine();
+        Items item = new Items();
+        while (option != "8")
+        {
+            switch (option) 
+            {
+                case "1" :
+                	//display
+                	break;
+                case "2":
+                	//display less than 5
+                	break;
+                case "3":
+                	System.out.println("Please type the name of the item you wish to add the quantity amount");
+                    
+                	break;
+                case "4":
+                	//remove item
+                	break;
+                case "5":
+                	//change item's quantity
+                	break;
+                case "6":
+                	//change item selling price
+                	break;
+                case "7":
+                	//change item cost price
+                	break;
+            }
+            System.out.println(menu);
+            option = in.nextLine();
+        }
+    }
 }
