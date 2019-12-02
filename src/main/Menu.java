@@ -43,7 +43,7 @@ public class Menu {
         String firstName = "";
         String lastName = "";
         SalesPerson sp = new SalesPerson();
-        while (option != "3"){
+        while (!option.equals("3")){
             switch (option) {
             // Display Total Sales
                 case "1":

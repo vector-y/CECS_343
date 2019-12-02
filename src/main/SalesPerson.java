@@ -22,8 +22,7 @@ public final class SalesPerson {
     //create a new salesperson to add to database
     static int salary = 50000;
     public SalesPerson(String firstName, String lastName, String phoneNum, String address, int commission){
-        int eID = getMaxID();
-        insertSPToDatabase(eID,firstName,lastName,phoneNum,address,salary,commission);
+        insertSPToDatabase(firstName,lastName,phoneNum,address,salary,commission);
         //check all Salespersons input and validate that primary key does not exist yet
         
     }
@@ -42,7 +41,7 @@ public final class SalesPerson {
         try{
             if (valid){
                 stmt = conn.createStatement();
-                String salesPersonSQL = "SELECT FIRSTNAME, LASTNAME, COMMISSIONRATE,TOTALCOMMISSION FROM EMPLOYEES";
+                String salesPersonSQL = "SELECT EID FIRSTNAME, LASTNAME, COMMISSIONRATE,TOTALCOMMISSION FROM EMPLOYEES";
                 rs = stmt.executeQuery(salesPersonSQL);
                 
                 while (rs.next()){
@@ -197,12 +196,12 @@ public final class SalesPerson {
     
 
     //query to add new salesperson into database
-    void insertSPToDatabase(int eID, String firstName, String lastName, String phoneNum, String address, int salary, int commission) {
+    void insertSPToDatabase(String firstName, String lastName, String phoneNum, String address, int salary, int commission) {
         Statement stmt;
         try
         {
             stmt = conn.createStatement();
-            String insertNewSPSQL = String.format("INSERT INTO Employees(EID,FIRSTNAME,LASTNAME,PHONENUMBER,ADDRESS,SALARY,COMMISSIONRATE,TOTALCOMMISSION) values (%d,'%s','%s','%s','%s',%d,%d,%d)", eID,firstName,lastName,phoneNum,address,salary,commission,0);
+            String insertNewSPSQL = String.format("INSERT INTO Employees(FIRSTNAME,LASTNAME,PHONENUMBER,ADDRESS,SALARY,COMMISSIONRATE,TOTALCOMMISSION) values ('%s','%s','%s','%s',%d,%d,%d)", firstName,lastName,phoneNum,address,salary,commission,0);
             //System.out.println(insertNewSPSQL);
             System.out.println("Employee added to database \n");
             stmt.executeUpdate(insertNewSPSQL);
@@ -213,27 +212,6 @@ public final class SalesPerson {
         }
     }
 
-    //get the maxID 
-    private int getMaxID() {
-        Statement stmt;
-        int maxID = 0;
-        try {
-            
-            stmt = conn.createStatement();
-            String getMaxSQL = "SELECT MAX(EID) AS MAXID FROM EMPLOYEES";
-            ResultSet rs = null;rs = stmt.executeQuery(getMaxSQL);
-            
-            while (rs.next()) {
-                maxID = rs.getInt("MAXID");
-            }
-        }
-        catch(SQLException sqlExcept)
-        {
-            sqlExcept.printStackTrace();
-        }
-        return maxID+1;
-        
-    }
     //if null just change string to N/A
     String dispNull (String input) {
         //because of short circuiting, if it's null, it never checks the length.

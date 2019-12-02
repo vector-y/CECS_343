@@ -8,9 +8,6 @@ import java.sql.*;
 import java.util.Scanner;
 
 
-/**
- * user: cecs343 password: cecs343
- */
 public class main {
     
     static String MASTERPASSWORD;
@@ -19,10 +16,10 @@ public class main {
     static Connection conn = db.connect();
 
     /**
- * Takes the input string and outputs "N/A" if the string is empty or null.
- * @param input The string to be mapped.
- * @return  Either the input string or "N/A" as appropriate.
- */
+    * Takes the input string and outputs "N/A" if the string is empty or null.
+    * @param input The string to be mapped.
+    * @return  Either the input string or "N/A" as appropriate.
+    */
     public static String dispNull (String input) {
         //because of short circuiting, if it's null, it never checks the length.
         if (input == null || input.length() == 0)
@@ -31,7 +28,7 @@ public class main {
             return input;
     }
     
-     public static void main(String[] args) {
+    public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
         while (!isSetup()) {
             System.out.println(">> Welcome to initial setup!  Please enter the password you would like to set as. <<");
@@ -69,7 +66,7 @@ public class main {
                     break;
             // Add Items
                 case "4":
-                    menu.displayItemSubmenu();
+                    menu.displayItemSubMenu();
                     break;
             // View Employee Information
                 case "5":
@@ -78,7 +75,6 @@ public class main {
              //View Report   
                 case "6":
                     break;   
-                 
                 default:
                     break;
             }
@@ -129,6 +125,12 @@ public class main {
         }
         return false;
     }
+    
+    /**
+     * To verify if the password is valid. 
+     * @param password - password to check as a string
+     * @return true if the password is valid. 
+     */
     private static boolean isValid(String password) {
         Statement stmt = null;
         String query = "SELECT password, master FROM passwords";  
