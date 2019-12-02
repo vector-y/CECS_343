@@ -19,15 +19,15 @@ public class Menu {
 
     public Menu (){}
     void printMenu(){
-         System.out.println("Main Menu");
-         String menu =    "1. New Sale\n"
+        System.out.println("Please select an option.\n");
+        System.out.println("Main Menu");
+        String menu =    "1. New Sale\n"
                         + "2. Add Customer\n"
-                        + "3. Edit Customer\n"
-                        + "4. Add Employee\n"
-                        + "5. View Employee Info\n"
-                        + "6. View Report\n"
-                        + "7. Exit\n";
-         System.out.println(menu); 
+                        + "3. Add Employee\n"
+                        + "4. View Employee Info\n"
+                        + "5. View Report\n"
+                        + "6. Exit\n";
+        System.out.print(menu + "\n>> "); 
     }
     void displayEmployeeInfoMenu(){
         
@@ -133,10 +133,13 @@ public class Menu {
         String lastName = console.nextLine();
         System.out.print("Phone Number: ");
         String phoneNumber = console.nextLine();
-        System.out.println("Mail Address: ");
+        System.out.print("Mail Address: ");
         String mail = console.nextLine();
-        System.out.println("Delivery Address: ");
-        String delivery = console.nextLine();
+        System.out.print("Delivery Address: ");
+        String delivery = "";
+        if (console.hasNextLine()) {
+            delivery = console.nextLine();
+        }
         Customer cust = new Customer(firstName, lastName, phoneNumber, mail, delivery);
     }
     

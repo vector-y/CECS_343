@@ -35,16 +35,18 @@ public class main {
         Scanner in = new Scanner(System.in);
         
         System.out.println(">> Welcome to initial setup!  Please enter the password you would like to set as. <<");
-        
+        System.out.print(">> ");
         MASTERPASSWORD = in.nextLine().trim();
         
-        System.out.println("Great! Let's log you on...");
-        
+        System.out.println("Great! Let's log you on...\n\n");
+        System.out.println("----------------------------------------------------------");
         Menu menu = new Menu();
         menu.printMenu();
         String option = in.nextLine();
         
         while (option != "7"){
+            System.out.println("Selected Option " + option);
+            System.out.println("----------------------------------------------------------");
             switch (option) {
             // New Sale
                 case "1":
@@ -53,26 +55,23 @@ public class main {
             // Add customer
                 case "2":
                     menu.addCustomer();
-                    System.out.println("Successfully Added New Customer");
-                    break;
-            // Edit Customer
-                case "3":
-                    
+                    System.out.println("\nSuccessfully Added New Customer");
                     break;
             // Add employee
-                case "4":
+                case "3":
                     menu.addSalesPerson();
                     break;
             // View Employee Information
-                case "5":
+                case "4":
                     menu.displayEmployeeInfoMenu();
                     break;
             // View Report
-                case "6":
+                case "5":
                     break;
                 default:
                     break;
             }
+            System.out.println("\n----------------------------------------------------------\n");
             menu.printMenu();
             option = in.nextLine();
         }        
