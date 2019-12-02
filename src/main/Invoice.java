@@ -21,9 +21,11 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/** @author victor
+/**
+ * Invoice class that handles all functionalities related to the invoice or payments. 
  */
-public class Invoice {    
+public class Invoice {  
+    
     private static int ORDERNUMBER = 0;
 
     DBConnect dbConnection = new DBConnect();
@@ -36,7 +38,6 @@ public class Invoice {
     private float invoiceCharge;
     private int deliveryCharge;
     private float invoiceDiscount;
-//    private ArrayList<String> listOfItems;
     private ArrayList<String> invoiceState;
     private Map<String, Integer> items;
     static Scanner in = new Scanner(System.in);
@@ -44,54 +45,33 @@ public class Invoice {
     Time time;
     private String firstName;
     private String lastName;
-    public static void main(String[] args) {
 
-    }
-
-    //private Boolean debugValue = false;
-    /*
-        float totalDue : How much needs to be paid
-        float paymentReceiptcount : How many payments receipts paid the invoice
-        int dayCount: How many days it took them to pay
-        float invoiceCharge: A 2% charge if invoice isn't paid
-        int deliveryCharge: A flat fee for delivery
-        float invoiceDiscount : A 10% discount if invoice is paid in 10 days
-        Items[] listOfItems : The list of items sold / to deliver to customer
-        bool state : A list of services provided
-        Date dateSold : The date of when the invoice first started
-    */
-    public Invoice(double totalDue, double totalPaid, int paymentCount, int dayCount, float invoiceCharge, int deliveryCharge, float invoiceDiscount, ArrayList<String> listOfItems, ArrayList<String> invoiceState) {
-        insertInvoiceToDatabase(totalDue,totalPaid,paymentCount,dayCount,invoiceCharge,deliveryCharge,invoiceDiscount,listOfItems,invoiceState);
-    }
-
-    Invoice(Date now, Time time, String firstName, String lastName) {
-        this.now = now;
+    /**
+     * Default constructor for Invoice
+     * @param date - The date of sale
+     * @param time - The time of sale
+     * @param firstName - The first name of the customer.
+     * @param lastName - The last name of the customer. 
+     */
+    Invoice(Date date, Time time, String firstName, String lastName) {
+        this.now = date;
         this.time = time;
         this.firstName = firstName;
         this.lastName = lastName;
         items = new HashMap<String, Integer>();
-
-//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
-    /*
-        this.totalDue = totalDue;
-        this.totalPaid = totalPaid;
-        this.paymentReceiptCount = paymentReceiptCount;
-        this.dayCount = dayCount;
-        this.invoiceCharge = invoiceCharge;
-        deliveryCharge = 10;
-        this.invoiceDiscount = invoiceDiscount;
-        listOfItems = new ArrayList<String>();
-        openInvoices = new ArrayList<String>();
-        closedInvoices = new ArrayList<String>();
-    */
-    
+
+    /**
+     * Helper function to print the invoice menu
+     */
     public void invoiceMenu(){
         System.out.println("	(1) Add an electronic");
         System.out.println("	(2) End the sale");
     }
     
+    /**
+     * Helper function to print the menu
+     */
     public void electronicMenu(){
         System.out.println("	(1) Airpods Pro");
         System.out.println("	(2) Surface Pro X");
@@ -105,7 +85,9 @@ public class Invoice {
         System.out.println("	(10) Samsung Smart TV 4K with HDR");
     }
     
-    /* To add an invoice for a new order. */
+    /**
+     * To add new invoice for a valid customer. 
+     */
     public void addNewInvoice(){
         boolean saleOver = false;
         int choice;
@@ -143,31 +125,21 @@ public class Invoice {
         }
     }
     
+    /**
+     * Helper function that prompts for payment. 
+     */
     public void makePayment(){
         System.out.println("Enter payment: ");
         double payment = Double.parseDouble((in.nextLine()));
         //double change =
     }
-    
-    //query to add new invoice into database
-    void insertInvoiceToDatabase(double totalDue, double totalPaid, int paymentCount, int dayCount, float invoiceCharge, int deliveryCharge, float invoiceDiscount, ArrayList<String> listOfItems, ArrayList<String> invoiceState) {
-        Statement stmt;
-        try
-        {
-            stmt = conn.createStatement();
-            String insertNewSPSQL = String.format("INSERT INTO Invoices(TOTALDUE,TOTALPAID,PAYMENTCOUNT,DAYCOUNT,INVOICECHARGE,DELIVERYCHARGE,INVOICEDISCOUNT,LISTOFITEMS,INVOICESTATE) values (%f,%f,%d,%d,%f,%d,%f,'%s','%s')", totalDue,totalPaid,paymentCount,dayCount,invoiceCharge,deliveryCharge,invoiceDiscount,listOfItems,invoiceState);
-            System.out.println(insertNewSPSQL);
-            stmt.executeUpdate(insertNewSPSQL);
-        }
-        catch (SQLException sqlExcept)
-        {
-            sqlExcept.printStackTrace();
-        }
-    }
-    
-    
-    
-    //query to add new deliveryAddress into database
+ 
+    /**
+     * query to add new deliveryAddress into database
+     * @param address - delivery address 
+     * @param city - city for delivery
+     * @param zipCode - zip code for delivery
+     */
     void insertDeliveryToDatabase(String address, String city, String zipCode) {
         Statement stmt;
         try
@@ -184,18 +156,17 @@ public class Invoice {
         }
     }
     
+    /**
+     * Helper function that adds the items into the hash map and keeps count of items. 
+     */
     public void newElectronicOrder(){
-//        listOfItems = new ArrayList<String>();        
-
         electronicMenu();
         int choice;
         choice = menu(Integer.parseInt(in.nextLine()));
         switch(choice) {
             case 1:
-//                listOfItems.add("AirPods Pro");
                 addItem("AirPods Pro");
             case 2:
-//                listOfItems.add("Surface Pro X");
                 addItem("Surface Pro X");
             case 3:
 //                listOfItems.add("Macbook Pro");
@@ -217,15 +188,11 @@ public class Invoice {
         }
     }
     
-    public double getTotal(){
-        double totalDue = 0;
-        for(Map.Entry<String, Integer> electronic : items.entrySet()){
-            
-            totalDue += (getCost(electronic.getKey()) * electronic.getValue());
-        }
-        return totalDue;
-    }
-    
+    /**
+     * Helper function that gets the cost of the items.
+     * @param selection
+     * @return cost as double
+     */
     public double getCost(String selection) {
         if(selection.equals("AirPods Pro")) {
             return 100;
@@ -260,16 +227,19 @@ public class Invoice {
         return 0;
     }
     
-    //Returns an int to let us know what the user picked
+    /**
+     * Returns an int to let us know what the user picked
+     * @param x - user input as an integer.
+     * @return an integer that the user picked.
+     */
     public static int menu(int x) {
         return x;
     }
     
-    public void add(String s){
-//        listOfItems.add(s);
-        
-    }
-    
+    /**
+     * Function to prompt for delivery information.
+     * @return the delivery address
+     */
     public String addDeliveryInfo(){
         System.out.println("What's your address?");
         String address = in.nextLine();
@@ -282,7 +252,10 @@ public class Invoice {
         return overallAddress;
     }
     
-    /* To view the current invoices that have not been fully paid. */
+    /**
+     * To display the open invoice 
+     * @param orderNumber - order number as an integer
+     */
     public void displayOpenInvoice(int orderNumber){
         Statement stmt = null;
         ResultSet rs = null;
@@ -320,6 +293,11 @@ public class Invoice {
         }
     }
     
+    /**
+     * Helper function to determine if the invoice is valid
+     * @param orderNumber
+     * @return True if valid
+     */
     public boolean checkInvoice(int orderNumber){
         Statement stmt = null;
         ResultSet rs = null;
@@ -366,6 +344,10 @@ public class Invoice {
         return orderSummary;
     }
     
+    /**
+     * Helper function that adds item to the hash map
+     * @param item 
+     */
     private void addItem(String item) {
         if (items.containsKey(item)) {
             items.put(item, items.get(item) + 1);
@@ -374,6 +356,11 @@ public class Invoice {
         }
     }
     
+    /**
+     * Function that finalizes the sale and places all products purchased to database. 
+     * @param delivery - "Y" or "N" to denote if delivery option was selected.
+     * @return the total amount due for the order as a double. 
+     */
     public double finalizeSale(String delivery) {
         // Entering data into Orders
         System.out.println("Finalizing sale...");
@@ -414,6 +401,11 @@ public class Invoice {
         return this.totalDue;
     }
     
+    /**
+     * Helper function that prints out a formatted table. 
+     * @param query
+     * @return the table as a String.
+     */
     public String getTable(String query) {
         Statement stmt = null;
         String table = "";
@@ -455,13 +447,3 @@ public class Invoice {
         return table;
     }
 }
-/*
- String orderSummary = "";//string for all sales
-        for(String o : invoiceState) {
-            if(o.equals("Open")){
-               orderSummary += o;
-               orderSummary += "\n"; 
-            }    
-        }
-        return orderSummary;
-*/
