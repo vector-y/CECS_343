@@ -74,7 +74,6 @@ public class main {
                     break;
             //add new SalesPerson
                 case "7":
-                    System.out.println("Successfully Added New Sales Person");
                     menu.addSalesPerson();
                     break;
                 default:

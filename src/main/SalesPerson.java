@@ -70,20 +70,21 @@ public final class SalesPerson {
     void displayTotalSales(String firstName, String lastName){
         //query to check for the name
         int ID = getID(firstName,lastName);
-        
+        System.out.println(ID);
         Statement stmt = null;
         ResultSet rs = null;
         
         try {
             stmt = conn.createStatement();
-            String salesPersonSQL = "SELECT COUNT(salesRepID) AS totalSales FROM Orders" + "WHERE salesRepID = " + ID;
+            String salesPersonSQL = "SELECT COUNT(salesRepID) AS totalSales FROM Orders WHERE salesRepID = " + ID;
+            //System.out.println(salesPersonSQL);
             rs = stmt.executeQuery(salesPersonSQL);
             
             //loop through database and see if the user input's salesperson's name exists or not
             //if exists, set the flag to be true
             while (rs.next()) {
                int totalSales = rs.getInt("totalSales");
-               System.out.println(firstName + " " + lastName + "has made" + totalSales + "total Sales");
+               System.out.println(firstName + " " + lastName + " has made " + totalSales + " total Sales");
             }
             rs.close();
             stmt.close();
@@ -202,7 +203,8 @@ public final class SalesPerson {
         {
             stmt = conn.createStatement();
             String insertNewSPSQL = String.format("INSERT INTO Employees(EID,FIRSTNAME,LASTNAME,PHONENUMBER,ADDRESS,SALARY,COMMISSIONRATE,TOTALCOMMISSION) values (%d,'%s','%s','%s','%s',%d,%d,%d)", eID,firstName,lastName,phoneNum,address,salary,commission,0);
-            System.out.println(insertNewSPSQL);
+            //System.out.println(insertNewSPSQL);
+            System.out.println("Employee added to database \n");
             stmt.executeUpdate(insertNewSPSQL);
         }
         catch (SQLException sqlExcept)
