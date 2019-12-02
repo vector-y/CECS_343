@@ -67,13 +67,18 @@ public class main {
                 case "3":
                     menu.addSalesPerson();
                     break;
-            // View Employee Information
+            // Add Items
                 case "4":
+                    menu.displayItemSubMenu();
+                    break;
+            // View Employee Information
+                case "5":
                     menu.displayEmployeeInfoMenu();
                     break;
-            // View Report
-                case "5":
-                    break;
+             //View Report   
+                case "6":
+                    break;   
+                 
                 default:
                     break;
             }
