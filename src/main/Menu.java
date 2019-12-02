@@ -84,37 +84,19 @@ public class Menu {
     }
     void addSalesPerson(){
         Scanner input = new Scanner(System.in);
-        
-        System.out.println("Please enter your sale person's first name(max: 20 characters)");
+        System.out.println("Please enter all fields for new customer:");
+
+        System.out.print("First Name: ");
         String firstName = input.nextLine();
-        while (firstName.length() > 20) {
-            System.out.println("Please enter your sale person's first name(max: 20 characters)");
-            firstName= input.nextLine();
-        }
-        
-        System.out.println("Please enter your sale person's last name(max: 20 characters)");
+        System.out.print("Last Name: ");
         String lastName = input.nextLine();
-        while (lastName.length() > 20) {
-            System.out.println("Please enter your sale person's last name(max: 20 characters)");
-            lastName = input.nextLine();
-        }
-        
-                    
-        System.out.println("Please enter your sale person's phone Number(max: 20 characters)");
+        // Verify if valid sales person is valid
+        System.out.print("Phone Number: ");
         String phoneNum = input.nextLine();
-        while (phoneNum.length() > 20) {
-            System.out.println("Please enter your sale person's phone Number(max: 20 characters)");
-            phoneNum = input.nextLine();
-        }
-        
-        System.out.println("Please enter your sale person's address(max: 20 characters)");
+        System.out.print("Address: ");
         String address = input.nextLine();
-        while (address.length() > 20) {
-            System.out.println("Please enter your sale person's address(max: 20 characters)");
-            address = input.nextLine();
-        }
-        
-        System.out.println("Please enter sale person's commission rate");
+        System.out.print("Commission Rate: ");
+        // verify if commision rate is valid. 
         while (!input.hasNextInt()) 
         {        
             input.next(); 
