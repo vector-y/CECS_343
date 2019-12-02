@@ -155,7 +155,7 @@ public class Menu {
         
     }
     
-       void displayItemSubmenu()
+       void displayItemSubMenu()
     {
         Scanner in = new Scanner(System.in);
         System.out.println("View Item Menu");
