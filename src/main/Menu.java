@@ -26,8 +26,7 @@ public class Menu {
                         + "4. Add Employee\n"
                         + "5. View Employee Info\n"
                         + "6. View Report\n"
-                        + "7. Add SalesPerson\n"
-                        + "8. Exit\n";
+                        + "7. Exit\n";
          System.out.println(menu); 
     }
     void displayEmployeeInfoMenu(){
