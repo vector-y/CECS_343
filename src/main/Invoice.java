@@ -68,6 +68,7 @@ public class Invoice {
     public void invoiceMenu(){
         System.out.println("	(1) Add an electronic");
         System.out.println("	(2) End the sale");
+        System.out.print("Please select an option: ");
     }
     
     /**
@@ -95,28 +96,28 @@ public class Invoice {
         while(saleOver == false){
             invoiceMenu();
             choice = menu(Integer.parseInt(in.nextLine()));
-            System.out.println("input is..." + choice);
+            System.out.println("Selected Option " + choice);
             switch(choice){
                 case 1:
                     newElectronicOrder();
                     break;
                 case 2:
-                    System.out.println("What you have purchased...");
+                    System.out.println("Do you need it delivered? (Y/N)");
+                    String delivery = in.nextLine().toUpperCase().trim();
+                    System.out.println("\nOrder Summary -----------------------");
                     for(Map.Entry<String, Integer> electronic : items.entrySet()){
                         System.out.println(electronic.getKey());
                     }
-                    System.out.println("Do you need it delivered? (Y/N)");
-                    String delivery = in.nextLine().toUpperCase().trim();
                     if(delivery.equals("Y")){
                         ORDERNUMBER += 1;
                         totalDue = finalizeSale(delivery);
                         totalDue += deliveryCharge;
-                        String orderSummary = String.format("Here's the total due: %f", totalDue);
+                        String orderSummary = String.format("TOTAL DUE: %f", totalDue);
                         System.out.println(orderSummary);
                         System.out.println("Thanks for shopping with us!");
                     } else if(delivery.equals("N")){
                         totalDue = finalizeSale(delivery);
-                        String orderSummary = String.format("Here's the total due: %f", totalDue);
+                        String orderSummary = String.format("TOTAL DUE: %.2f", totalDue);
                         System.out.println(orderSummary);
                         System.out.println("Thanks for shopping with us!");
                     }
@@ -373,7 +374,6 @@ public class Invoice {
      */
     public double finalizeSale(String delivery) {
         // Entering data into Orders
-        System.out.println("Finalizing sale...");
         String query = "INSERT INTO orders (orderNumber, firstName, lastName, delivery, orderDate, orderTime, salesRepID) VALUES (?,?,?,?,?,?,?)";
         try {
             PreparedStatement orders = conn.prepareStatement(query);
@@ -389,7 +389,6 @@ public class Invoice {
             
             query = "INSERT INTO orderDetails (orderNumber, productName, quantity, priceEach) VALUES (?,?,?,?)";
             for(Map.Entry<String, Integer> electronic : items.entrySet()){
-                System.out.println(ORDERNUMBER + " " + electronic.getKey() + " " + electronic.getValue() + " " + getCost(electronic.getKey()));
                 PreparedStatement orderDetails = conn.prepareStatement(query);
                 orderDetails.setInt(1, ORDERNUMBER);
                 orderDetails.setString(2, electronic.getKey());
@@ -403,8 +402,6 @@ public class Invoice {
                     + ORDERNUMBER + " group by ordernumber";
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(query);
-            System.out.println(query);
-            System.out.println(getTable(query));
             while (rs.next()) {
                 this.totalDue = rs.getDouble("total");
             }
