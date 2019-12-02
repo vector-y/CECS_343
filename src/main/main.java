@@ -69,7 +69,7 @@ public class main {
                     break;
             // Add Items
                 case "4":
-                    menu.displayItemSubMenu();
+                    menu.displayItemSubmenu();
                     break;
             // View Employee Information
                 case "5":
