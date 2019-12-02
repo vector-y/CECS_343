@@ -24,9 +24,10 @@ public class Menu {
         String menu =    "1. New Sale\n"
                         + "2. Add Customer\n"
                         + "3. Add Employee\n"
-                        + "4. View Employee Info\n"
-                        + "5. View Report\n"
-                        + "6. Exit\n";
+                        + "4. Edit Items\n"
+                        + "5. View Employee Info\n"
+                        + "6. View Report\n"
+                        + "7. Exit\n";
         System.out.print(menu + "\n>> "); 
     }
     void displayEmployeeInfoMenu(){
