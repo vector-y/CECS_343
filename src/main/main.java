@@ -33,10 +33,17 @@ public class main {
     
      public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
-        
-        System.out.println(">> Welcome to initial setup!  Please enter the password you would like to set as. <<");
-        System.out.print(">> ");
-        MASTERPASSWORD = in.nextLine().trim();
+        while (!isSetup()) {
+            System.out.println(">> Welcome to initial setup!  Please enter the password you would like to set as. <<");
+            System.out.print(">> ");
+            MASTERPASSWORD = in.nextLine().trim();
+            setPassword(MASTERPASSWORD);
+        }
+        String password = "";
+        do {        
+            System.out.print("Please enter password: ");
+            password = in.nextLine();
+        } while (!isValid(password));
         
         System.out.println("Great! Let's log you on...\n\n");
         System.out.println("----------------------------------------------------------");
@@ -44,7 +51,7 @@ public class main {
         menu.printMenu();
         String option = in.nextLine();
         
-        while (option != "7"){
+        while (!option.equals("6")){
             System.out.println("Selected Option " + option);
             System.out.println("----------------------------------------------------------");
             switch (option) {
@@ -75,5 +82,71 @@ public class main {
             option = in.nextLine();
         }        
     }
-}//end FirstExample}
+    
+
+    private static boolean isSetup() {
+        Statement stmt = null;
+        String query = "SELECT password, master FROM passwords";  
+        String password = "";
+        String master = "";
+        try {
+            stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            
+            while (rs.next()) {
+                password = rs.getString("password");
+                master = rs.getString("master");
+                if (password.length() > 0 && master.equals("Y")) {
+                    return true;
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Verifying if password exists failed.");
+            System.out.println("Please restart program");
+        }
+        return false;
+    }
+    private static boolean setPassword(String password) {
+        try {
+            if (!password.isEmpty()) {
+                String query = "INSERT INTO passwords (password, master) VALUES (?,?)";
+                PreparedStatement setup = conn.prepareStatement(query);
+                setup.setString(1, password); //set values for newBook
+                setup.setString(2, "Y");
+                setup.executeUpdate();
+                System.out.println("\nPassword Is Set.");
+                return true;
+            } else {
+                System.out.println("The two password entries are different. Please try again.");
+            } 
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    private static boolean isValid(String password) {
+        Statement stmt = null;
+        String query = "SELECT password, master FROM passwords";  
+        String master = "Y";
+        String dbPassword = "";
+        try {
+            stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            
+            while (rs.next()) {
+                dbPassword = rs.getString("password");
+                master = rs.getString("master");
+                if (dbPassword.equals(password) && master.equals("Y")) {
+                    return true;
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("ERROR: Failed to verify password.");
+            System.out.println("Please try again.");
+            return false;
+        }
+        System.out.println("Invalid Password.  Plesae try again.");
+        return false;
+    }
+}
 
