@@ -75,16 +75,18 @@ public class Invoice {
      * Helper function to print the menu
      */
     public void electronicMenu(){
-        System.out.println("	(1) Airpods Pro");
-        System.out.println("	(2) Surface Pro X");
-        System.out.println("	(3) Macbook Pro");
-        System.out.println("	(4) Google Nest Wifi");
-        System.out.println("	(5) Bose Noise Cancelling Headphones 700");
-        System.out.println("	(6) Google Pixel 4");
-        System.out.println("	(7) iPhone 11 Pro");
-        System.out.println("	(8) Galaxy Note 10");
-        System.out.println("	(9) Amazon Fire TV Stick");
-        System.out.println("	(10) Samsung Smart TV 4K with HDR");
+//        System.out.println("	(1) Airpods Pro");
+//        System.out.println("	(2) Surface Pro X");
+//        System.out.println("	(3) Macbook Pro");
+//        System.out.println("	(4) Google Nest Wifi");
+//        System.out.println("	(5) Bose Noise Cancelling Headphones 700");
+//        System.out.println("	(6) Google Pixel 4");
+//        System.out.println("	(7) iPhone 11 Pro");
+//        System.out.println("	(8) Galaxy Note 10");
+//        System.out.println("	(9) Amazon Fire TV Stick");
+//        System.out.println("	(10) Samsung Smart TV 4K with HDR");
+        String query = "SELECT productName, MSRP FROM products";
+        System.out.println(getTable(query));
     }
     
     /**
