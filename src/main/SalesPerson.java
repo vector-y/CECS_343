@@ -69,7 +69,6 @@ public final class SalesPerson {
     void displayTotalSales(String firstName, String lastName){
         //query to check for the name
         int ID = getID(firstName,lastName);
-        System.out.println(ID);
         Statement stmt = null;
         ResultSet rs = null;
         
