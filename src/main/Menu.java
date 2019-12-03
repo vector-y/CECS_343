@@ -27,8 +27,31 @@ public class Menu {
                         + "4. View/Edit Items\n"
                         + "5. View Employee Info\n"
                         + "6. View Report\n"
-                        + "7. Exit\n";
+                        + "7. Make Payment\n"
+                        + "8. Exit\n";
         System.out.print(menu + "\n>> "); 
+    }
+    
+    void makePayment(){
+        Scanner console = new Scanner(System.in);
+        System.out.println("Please enter all fields for new customer:");
+        
+        System.out.print("Customer Number: ");
+        String customerNumber = console.nextLine();
+        int i_customerID = Integer.parseInt(customerNumber);
+       
+        System.out.print("Order Number: ");
+        String orderNumber = console.nextLine();
+        int i_orderID = Integer.parseInt(orderNumber);
+        
+        System.out.println("Date: ");
+        String date = console.nextLine();
+        
+        System.out.println("Amount: ");
+        String amount = console.nextLine();
+        double d_amount = Double.parseDouble(amount);
+      
+        Payments p = new Payments(i_customerID,i_orderID,date,d_amount);
     }
     void displayEmployeeInfoMenu(){
         
