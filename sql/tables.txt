@@ -35,12 +35,11 @@ CREATE TABLE orders (
 );
 
 CREATE TABLE payments (
-    customerFirstName   VARCHAR(20) NOT NULL,
-    customerLastName    VARCHAR(20) NOT NULL, 
+    customerID          INT NOT NULL, 
     orderNumber         INT NOT NULL, 
     paymentDate         DATE NOT NULL, 
     amount              DECIMAL(10,2) NOT NULL,
-    CONSTRAINT payments_pk PRIMARY KEY (customerFirstName, customerLastName, orderNumber)
+    CONSTRAINT payments_pk PRIMARY KEY (customerID, orderNumber)
 );
 
 CREATE TABLE orderDetails (
@@ -72,3 +71,4 @@ CREATE TABLE passwords (
 INSERT INTO employees (firstName,lastName,phoneNumber,address,salary,commissionRate,totalCommission) 
 VALUES ('Bob', 'Han', '234-342-2349', '234 Test Rd. Long Beach, CA 90803', 70, 2, 3);
 
+SELECT eID FROM employees;
