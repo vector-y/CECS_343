@@ -41,7 +41,7 @@ public final class SalesPerson {
         try{
             if (valid){
                 stmt = conn.createStatement();
-                String salesPersonSQL = "SELECT EID FIRSTNAME, LASTNAME, COMMISSIONRATE,TOTALCOMMISSION FROM EMPLOYEES";
+                String salesPersonSQL = "SELECT EID FIRSTNAME, LASTNAME, COMMISSIONRATE,TOTALCOMMISSION FROM EMPLOYEES WHERE FIRSTNAME = '" + firstName + "' AND LASTNAME = '" + lastName + "'" ;
                 rs = stmt.executeQuery(salesPersonSQL);
                 
                 while (rs.next()){
@@ -49,7 +49,7 @@ public final class SalesPerson {
                     String last_name = rs.getString("LASTNAME");
                     int commissionrate = rs.getInt("COMMISSIONRATE");
                     int totalcommission = rs.getInt("TOTALCOMMISSION");
-                    System.out.printf(salesPerson_display_format, dispNull(firstName), dispNull(lastName),commissionrate/100 + "%","$"+totalcommission);
+                    System.out.printf(salesPerson_display_format, dispNull(firstName), dispNull(lastName),commissionrate + "%","$"+totalcommission);
                 }
                 rs.close();
                 stmt.close();
