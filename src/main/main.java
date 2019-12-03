@@ -48,7 +48,7 @@ public class main {
         menu.printMenu();
         String option = in.nextLine();
         
-        while (!option.equals("7")){
+        while (!option.equals("8")){
             System.out.println("Selected Option " + option);
             System.out.println("----------------------------------------------------------");
             switch (option) {
@@ -74,7 +74,11 @@ public class main {
                     break;
              //View Report   
                 case "6":
-                    break;   
+                    break;
+             //Make Payment
+                case "7":
+                    menu.makePayment();
+                    break;
                 default:
                     break;
             }
