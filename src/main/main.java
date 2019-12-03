@@ -77,7 +77,7 @@ public class main {
                     break;
              //Make Payment
                 case "7":
-                    menu.makePayments();
+                    menu.makePayment();
                     break;
                 default:
                     break;
