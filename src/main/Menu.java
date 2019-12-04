@@ -34,17 +34,23 @@ public class Menu {
     
     void makePayment(){
         Scanner console = new Scanner(System.in);
-        System.out.println("Please enter all fields for new customer:");
+        System.out.println("Please enter all fields to make a payment:");
         
         System.out.print("Customer Number: ");
         String customerNumber = console.nextLine();
         int i_customerID = Integer.parseInt(customerNumber);
-       
+        System.out.println("Customer Account Info:");
+        String query = "SELECT orderNumber, total, pmtreceived, balance FROM customers "
+                + "INNER JOIN orders USING (firstName, lastName) INNER JOIN report "
+                + "USING (orderNumber) WHERE cid = " + i_customerID;
+        Invoice i = new Invoice();
+        System.out.println(i.getTable(query));
+        
         System.out.print("Order Number: ");
         String orderNumber = console.nextLine();
         int i_orderID = Integer.parseInt(orderNumber);
         
-        System.out.println("Date: ");
+        System.out.println("Date (YYYY-MM-DD): ");
         String date = console.nextLine();
         
         System.out.println("Amount: ");
@@ -173,9 +179,9 @@ public class Menu {
         Time time = new java.sql.Time(today.getTime());
         
         // Adding sales person
-        System.out.print("Enter Salesperson's First Name:");
+        System.out.print("Enter Salesperson's First Name: ");
         String eFirstName = console.nextLine();
-        System.out.println("Enter Salesperson's Last Name");
+        System.out.print("Enter Salesperson's Last Name: ");
         String eLastName = console.nextLine();
         int eID = 0;
         SalesPerson sales = new SalesPerson();
@@ -205,18 +211,11 @@ public class Menu {
         input = in.nextLine();
         if (input.equals("1")) {
             // open invoice
-            String query = "SELECT orderNumber, COALESCE(sum(amount), 0) totalpayments, "
-                    + "SUM(quantity * priceeach) total, (SUM(quantity * priceEach) - COALESCE(SUM(amount), 0)) balance from orders "
-                    + "INNER JOIN orderdetails using (ordernumber) left outer join payments using (ordernumber) "
-                    + "group by ordernumber HAVING (SUM(quantity * priceEach) - COALESCE(SUM(amount), 0)) > 0";
-;
+            String query = "SELECT * FROM report WHERE balance > 0"; // report is a view table
             System.out.println(invoice.getTable(query));
         } else if (input.equals("2")) {
             // close invoice
-            String query = "SELECT orderNumber, COALESCE(sum(amount), 0) totalpayments, "
-                    + "SUM(quantity * priceeach) total, (SUM(quantity * priceEach) - COALESCE(SUM(amount), 0)) balance from orders "
-                    + "INNER JOIN orderdetails using (ordernumber) left outer join payments using (ordernumber) "
-                    + "group by ordernumber HAVING (SUM(quantity * priceEach) - COALESCE(SUM(amount), 0)) = 0";
+            String query = "SELECT * FROM report WHERE balance = 0";
             System.out.println(invoice.getTable(query));
         } else {
             System.out.println("Not a vaild input.  Please try again.");

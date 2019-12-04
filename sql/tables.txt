@@ -1,5 +1,5 @@
 CREATE TABLE customers (
-    cID                 INT NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),
+    cID                 INT NOT NULL,
     firstName           VARCHAR(20) NOT NULL, 
     lastName            VARCHAR(20) NOT NULL, 
     phoneNumber         VARCHAR(20), 
@@ -9,7 +9,7 @@ CREATE TABLE customers (
 );
 
 CREATE TABLE employees (
-    eID                 INT NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),
+    eID                 INT NOT NULL,
     firstName           VARCHAR(20) NOT NULL, 
     lastName            VARCHAR(20) NOT NULL, 
     phoneNumber         VARCHAR(20) NOT NULL, 
@@ -22,7 +22,7 @@ CREATE TABLE employees (
 
 
 CREATE TABLE orders (
-    orderNumber     INT NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),
+    orderNumber     INT NOT NULL,
     firstName       VARCHAR(20) NOT NULL, 
     lastName        VARCHAR(20) NOT NULL, 
     delivery        VARCHAR(1) NOT NULL, 
@@ -39,7 +39,7 @@ CREATE TABLE payments (
     orderNumber         INT NOT NULL, 
     paymentDate         DATE NOT NULL, 
     amount              DECIMAL(10,2) NOT NULL,
-    CONSTRAINT payments_pk PRIMARY KEY (customerID, orderNumber)
+    CONSTRAINT payments_pk PRIMARY KEY (customerID, orderNumber, paymentDate)
 );
 
 CREATE TABLE orderDetails (
@@ -52,7 +52,7 @@ CREATE TABLE orderDetails (
 );
 
 CREATE TABLE products (
-    productNumber       INT NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),
+    productNumber       INT NOT NULL,
     productName         VARCHAR(20) NOT NULL, 
     MSRP                DECIMAL(10, 2) NOT NULL, 
     buyPrice            DECIMAL(10, 2) NOT NULL, 
@@ -67,8 +67,10 @@ CREATE TABLE passwords (
     master      VARCHAR(1) NOT NULL, 
     CONSTRAINT password_pk PRIMARY KEY (password, master)
 );
--- For testing
-INSERT INTO employees (firstName,lastName,phoneNumber,address,salary,commissionRate,totalCommission) 
-VALUES ('Bob', 'Han', '234-342-2349', '234 Test Rd. Long Beach, CA 90803', 70, 2, 3);
 
-SELECT eID FROM employees;
+CREATE VIEW report AS
+SELECT orderNumber, x.total total, COALESCE(y.payment, 0) pmtReceived, (x.total - COALESCE(y.payment, 0)) balance FROM (SELECT orderNumber, SUM(quantity * priceEach) total FROM orders 
+INNER JOIN orderDetails using (orderNumber) group by orderNumber) x
+LEFT OUTER JOIN 
+(SELECT orderNumber, COALESCE(SUM(amount), 0) payment FROM payments WHERE customerID = 1 group by orderNumber) y
+USING (orderNumber);
