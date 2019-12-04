@@ -53,6 +53,7 @@ public class Menu {
       
         Payments p = new Payments(i_customerID,i_orderID,date,d_amount);
     }
+    
     void displayEmployeeInfoMenu(){
         
         Scanner in = new Scanner(System.in);
@@ -170,16 +171,60 @@ public class Menu {
         long millis=System.currentTimeMillis();  
         Date today = new Date(millis);
         Time time = new java.sql.Time(today.getTime());
-
         
+        // Adding sales person
+        System.out.print("Enter Salesperson's First Name:");
+        String eFirstName = console.nextLine();
+        System.out.println("Enter Salesperson's Last Name");
+        String eLastName = console.nextLine();
+        int eID = 0;
+        SalesPerson sales = new SalesPerson();
+        boolean isSPValid = sales.isValidSalesperson(eFirstName, eLastName);
+        if (!isSPValid) {
+            System.out.println("Salesperson not found. ");
+            System.out.println("Exiting sale.  Please try again.");
+            return;
+        } else {
+            eID = sales.getID(eFirstName, eLastName);
+            System.out.println("Attached Salesperson.");
+        }
         //Starting sale prompt
-        Invoice sale = new Invoice(today, time, firstName, lastName);
+        Invoice sale = new Invoice(today, time, firstName, lastName, eID);
         sale.addNewInvoice();
         
     }
     
-       void displayItemSubMenu()
-    {
+    void displayReports() {
+        Scanner in = new Scanner(System.in);
+        Invoice invoice = new Invoice();
+        String input = "";
+        System.out.println("Select Report to View:");
+        System.out.println("1. Open Invoices");
+        System.out.println("2. Close Invoices");
+        System.out.print(">> ");
+        input = in.nextLine();
+        if (input.equals("1")) {
+            // open invoice
+            String query = "SELECT orderNumber, COALESCE(sum(amount), 0) totalpayments, "
+                    + "SUM(quantity * priceeach) total, (SUM(quantity * priceEach) - COALESCE(SUM(amount), 0)) balance from orders "
+                    + "INNER JOIN orderdetails using (ordernumber) left outer join payments using (ordernumber) "
+                    + "group by ordernumber HAVING (SUM(quantity * priceEach) - COALESCE(SUM(amount), 0)) > 0";
+;
+            System.out.println(invoice.getTable(query));
+        } else if (input.equals("2")) {
+            // close invoice
+            String query = "SELECT orderNumber, COALESCE(sum(amount), 0) totalpayments, "
+                    + "SUM(quantity * priceeach) total, (SUM(quantity * priceEach) - COALESCE(SUM(amount), 0)) balance from orders "
+                    + "INNER JOIN orderdetails using (ordernumber) left outer join payments using (ordernumber) "
+                    + "group by ordernumber HAVING (SUM(quantity * priceEach) - COALESCE(SUM(amount), 0)) = 0";
+            System.out.println(invoice.getTable(query));
+        } else {
+            System.out.println("Not a vaild input.  Please try again.");
+        }
+        
+    }
+    
+    void displayItemSubMenu() {
         Scanner in = new Scanner(System.in);
         System.out.println("View Item Menu");
         String menu =    "1. Display Items\n"

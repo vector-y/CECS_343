@@ -18,10 +18,13 @@ import java.util.logging.Logger;
 public final class SalesPerson {
     DBConnect dbConnection = new DBConnect();
     Connection conn = dbConnection.connect();
+    private int eID;
+    
     //Use Case 15
     //create a new salesperson to add to database
     static int salary = 50000;
     public SalesPerson(String firstName, String lastName, String phoneNum, String address, int commission){
+        setEID();
         insertSPToDatabase(firstName,lastName,phoneNum,address,salary,commission);
         //check all Salespersons input and validate that primary key does not exist yet
         
@@ -93,7 +96,7 @@ public final class SalesPerson {
             sqlExcept.printStackTrace();
         }
     }
-    private int getID(String firstName, String lastName){
+    public int getID(String firstName, String lastName){
         Statement stmt = null;
         ResultSet rs = null;
         try {
@@ -122,6 +125,29 @@ public final class SalesPerson {
             sqlExcept.printStackTrace();
         }
         return -1;
+    }
+    
+    public void setEID() {
+        int eID = 0;
+        String query = "SELECT COALESCE(number, 0) eID FROM \n"
+                + "(SELECT MAX(eID) number from employees) x";
+        Statement stmt = null;
+        try {
+            stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+
+            while (rs.next()) {
+                eID = rs.getInt("eID");
+            }
+        } catch (Exception e) {
+            //Handle errors for Class.forName
+            e.printStackTrace();
+        }
+        if (eID == 0) {
+            this.eID = 1;
+        } else {
+            this.eID = eID + 1;
+        }
     }
     boolean checkSalesPerson(String i_firstName, String i_lastName){
         Statement stmt = null;
@@ -200,7 +226,7 @@ public final class SalesPerson {
         try
         {
             stmt = conn.createStatement();
-            String insertNewSPSQL = String.format("INSERT INTO Employees(FIRSTNAME,LASTNAME,PHONENUMBER,ADDRESS,SALARY,COMMISSIONRATE,TOTALCOMMISSION) values ('%s','%s','%s','%s',%d,%d,%d)", firstName,lastName,phoneNum,address,salary,commission,0);
+            String insertNewSPSQL = String.format("INSERT INTO Employees(EID, FIRSTNAME,LASTNAME,PHONENUMBER,ADDRESS,SALARY,COMMISSIONRATE,TOTALCOMMISSION) values (%d,'%s','%s','%s','%s',%d,%d,%d)", eID, firstName,lastName,phoneNum,address,salary,commission,0);
             //System.out.println(insertNewSPSQL);
             System.out.println("Employee added to database \n");
             stmt.executeUpdate(insertNewSPSQL);
@@ -218,6 +244,26 @@ public final class SalesPerson {
             return "N/A";
         else
             return input;
+    }
+    
+    public boolean isValidSalesperson(String fName, String lName) {
+        String query = "SELECT firstName, lastName FROM employees WHERE firstName = '" + fName + "' AND lastName = '" + lName + "'";
+        String firstName = "";
+        String lastName = "";
+        Statement stmt = null;
+        try {
+            stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+
+            while (rs.next()) {
+                firstName = rs.getString("firstName");
+                lastName = rs.getString("lastName");
+            }
+        } catch (Exception e) {
+            //Handle errors for Class.forName
+            e.printStackTrace();
+        }
+        return firstName.equals(fName) && lastName.equals(lName);
     }
 }
 

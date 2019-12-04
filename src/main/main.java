@@ -74,6 +74,7 @@ public class main {
                     break;
              //View Report   
                 case "6":
+                    menu.displayReports();
                     break;
              //Make Payment
                 case "7":

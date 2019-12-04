@@ -9,11 +9,13 @@ import java.util.Arrays;
 public class Customer {
     DBConnect dbConnection = new DBConnect();
     Connection conn = dbConnection.connect();
+    private int cID;
     
     /**
      * Default constructor
      */
     public Customer() {
+        cID = 0;
     }
     
     /**
@@ -26,16 +28,18 @@ public class Customer {
      * @param delivery - Delivery address of the customer.
      */
     public Customer(String firstName, String lastName, String phone, String mail, String delivery) {
+        setCID();
         try {
             if (!firstName.isEmpty() && !lastName.isEmpty()) {
-                String query = "INSERT INTO customers (firstName, lastName, phoneNumber, mailAddress, deliveryAddress) VALUES (?,?,?,?,?)";
+                String query = "INSERT INTO customers (cID, firstName, lastName, phoneNumber, mailAddress, deliveryAddress) VALUES (?,?,?,?,?,?)";
                 try {
                     PreparedStatement customer = conn.prepareStatement(query);
-                    customer.setString(1, firstName); //set values for newBook
-                    customer.setString(2, lastName);
-                    customer.setString(3, phone);
-                    customer.setString(4, mail);
-                    customer.setString(5, delivery);
+                    customer.setInt(1, this.cID);
+                    customer.setString(2, firstName); //set values for newBook
+                    customer.setString(3, lastName);
+                    customer.setString(4, phone);
+                    customer.setString(5, mail);
+                    customer.setString(6, delivery);
                     customer.executeUpdate();
                     System.out.println("\nSuccessfully Added New Customer");
 
@@ -74,5 +78,27 @@ public class Customer {
             e.printStackTrace();
         }
         return firstName.equals(fName) && lastName.equals(lName);
+    }
+    private void setCID() {
+        int cID = 0;
+        String query = "SELECT COALESCE(number, 0) cID FROM \n"
+                + "(SELECT MAX(cID) number from customers) x";
+        Statement stmt = null;
+        try {
+            stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+
+            while (rs.next()) {
+                cID = rs.getInt("cID");
+            }
+        } catch (Exception e) {
+            //Handle errors for Class.forName
+            e.printStackTrace();
+        }
+        if (cID == 0) {
+            this.cID = 1;
+        } else {
+            this.cID = cID + 1;
+        }
     }
 }

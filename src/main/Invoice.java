@@ -44,8 +44,17 @@ public class Invoice {
     static Scanner in = new Scanner(System.in);
     Date now;
     Time time;
+    
+    // Customer name
     private String firstName;
     private String lastName;
+    
+    // Employee id
+    private int eID;
+
+    public Invoice () {
+        
+    }
 
     /**
      * Default constructor for Invoice
@@ -54,14 +63,16 @@ public class Invoice {
      * @param firstName - The first name of the customer.
      * @param lastName - The last name of the customer. 
      */
-    Invoice(Date date, Time time, String firstName, String lastName) {
+    public Invoice(Date date, Time time, String firstName, String lastName, int eID) {
         this.now = date;
         this.time = time;
         this.firstName = firstName;
         this.lastName = lastName;
+        this.eID = eID;
+        
         items = new HashMap<String, Integer>();
     }
-
+    
     /**
      * Helper function to print the invoice menu
      */
@@ -75,18 +86,18 @@ public class Invoice {
      * Helper function to print the menu
      */
     public void electronicMenu(){
-//        System.out.println("	(1) Airpods Pro");
-//        System.out.println("	(2) Surface Pro X");
-//        System.out.println("	(3) Macbook Pro");
-//        System.out.println("	(4) Google Nest Wifi");
-//        System.out.println("	(5) Bose Noise Cancelling Headphones 700");
-//        System.out.println("	(6) Google Pixel 4");
-//        System.out.println("	(7) iPhone 11 Pro");
-//        System.out.println("	(8) Galaxy Note 10");
-//        System.out.println("	(9) Amazon Fire TV Stick");
-//        System.out.println("	(10) Samsung Smart TV 4K with HDR");
-        String query = "SELECT productName, MSRP FROM products";
-        System.out.println(getTable(query));
+        System.out.println("	(1) Airpods Pro");
+        System.out.println("	(2) Surface Pro X");
+        System.out.println("	(3) Macbook Pro");
+        System.out.println("	(4) Google Nest Wifi");
+        System.out.println("	(5) Bose Noise Cancelling Headphones 700");
+        System.out.println("	(6) Google Pixel 4");
+        System.out.println("	(7) iPhone 11 Pro");
+        System.out.println("	(8) Galaxy Note 10");
+        System.out.println("	(9) Amazon Fire TV Stick");
+        System.out.println("	(10) Samsung Smart TV 4K with HDR");
+//        String query = "SELECT productName, MSRP FROM products";
+//        System.out.println(getTable(query));
     }
     
     /**
@@ -103,7 +114,9 @@ public class Invoice {
                 case 1:
                     newElectronicOrder();
                     break;
-                case 2:
+                case 2:                    
+                    ORDERNUMBER = getOrderNumber();
+                    System.out.println("TESTING ORDER NUMBER: " + ORDERNUMBER);
                     System.out.println("Do you need it delivered? (Y/N)");
                     String delivery = in.nextLine().toUpperCase().trim();
                     System.out.println("\nOrder Summary -----------------------");
@@ -111,7 +124,6 @@ public class Invoice {
                         System.out.println(electronic.getKey());
                     }
                     if(delivery.equals("Y")){
-                        ORDERNUMBER += 1;
                         totalDue = finalizeSale(delivery);
                         totalDue += deliveryCharge;
                         String orderSummary = String.format("TOTAL DUE: %f", totalDue);
@@ -129,6 +141,29 @@ public class Invoice {
         }
     }
     
+    public int getOrderNumber() {
+        int orderNumber = 0;
+        String query = "SELECT COALESCE(number, 0) orderNumber FROM \n"
+                + "(SELECT MAX(orderNumber) number from orders) x";
+        Statement stmt = null;
+        try {
+            stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+
+            while (rs.next()) {
+                orderNumber = rs.getInt("orderNumber");
+            }
+        } catch (Exception e) {
+            //Handle errors for Class.forName
+            e.printStackTrace();
+        }
+        if (orderNumber == 0) {
+            orderNumber = 1;
+        } else {
+            orderNumber = orderNumber + 1;
+        }
+        return orderNumber;
+    }
     /**
      * Helper function that prompts for payment. 
      */
@@ -265,97 +300,57 @@ public class Invoice {
         return overallAddress;
     }
     
-    /**
-     * To display the open invoice 
-     * @param orderNumber - order number as an integer
-     */
-    public void displayOpenInvoice(int orderNumber){
-        Statement stmt = null;
-        ResultSet rs = null;
-        //query to check for the name
-        boolean valid = checkInvoice(orderNumber);
-        //FULL VERSION: String invoice_display_format = "%f,%f,%d,%d,%f,%d,%f,'%s','%s'\n";
-        String invoice_display_format = "%f,%f,%d,%d,%f,%d,%f \n";
-        System.out.printf(invoice_display_format, "TOTALDUE","TOTALPAID","PAYMENTCOUNT","DAYCOUNT","INVOICECHARGE","DELIVERYCHARGE","INVOICEDISCOUNT");
-        try{
-            if (valid){
-                stmt = conn.createStatement();
-                String salesPersonSQL = "SELECT TOTALDUE,TOTALPAID,PAYMENTCOUNT,DAYCOUNT,INVOICECHARGE,DELIVERYCHARGE,INVOICEDISCOUNT FROM INVOICES";
-                rs = stmt.executeQuery(salesPersonSQL);
-                
-                while (rs.next()){
-                    double totalDue = rs.getDouble("TOTALDUE");
-                    double totalPaid = rs.getDouble("TOTALPAID");
-                    int paymentCount = rs.getInt("PAYMENYCOUNT");
-                    int dayCount = rs.getInt("DAYCOUNT");
-                    float invoiceCharge = rs.getFloat("INVOICECHARGE");
-                    int deliveryCharge = rs.getInt("DELIVERYCHARGE");
-                    float invoiceDiscount = rs.getFloat("INVOICEDISCOUNT");
-                    System.out.printf(invoice_display_format, totalDue,totalPaid,paymentCount,dayCount,invoiceCharge,deliveryCharge,invoiceDiscount);
-                }
-                rs.close();
-                stmt.close();
-            }
-            else{
-                System.out.println("No valid invoice in the database");
-            }
-        }
-        catch (SQLException sqlExcept)
-        {
-            sqlExcept.printStackTrace();
-        }
-    }
     
     /**
      * Helper function to determine if the invoice is valid
      * @param orderNumber
      * @return True if valid
      */
-    public boolean checkInvoice(int orderNumber){
-        Statement stmt = null;
-        ResultSet rs = null;
-        System.out.println(orderNumber);
-        
-        System.out.println(orderNumber);
-        try {
-            stmt = conn.createStatement();
-            String invoiceSQL = "SELECT * FROM ORDERS";
-            //initlize for salesperson flag
-            boolean i_name_flag = false;
-            rs = stmt.executeQuery(invoiceSQL);
-            
-            //loop through database and see if the user input's salesperson's name exists or not
-            //if exists, set the flag to be true
-            while (rs.next()) {
-                int dataOrderNum = rs.getInt("ORDERNUMBER");
-                //i_first/lastname is the name we can return true
-                if (orderNumber == dataOrderNum) {
-                    i_name_flag  = true;
-                }
-            }
-            rs.close();
-            stmt.close();
-            return i_name_flag;
-        } 
-        catch (SQLException sqlExcept)
-        {
-            sqlExcept.printStackTrace();
-        }
-        return false;
-    }
+//    public boolean checkInvoice(int orderNumber){
+//        Statement stmt = null;
+//        ResultSet rs = null;
+//        System.out.println(orderNumber);
+//        
+//        System.out.println(orderNumber);
+//        try {
+//            stmt = conn.createStatement();
+//            String invoiceSQL = "SELECT * FROM ORDERS";
+//            //initlize for salesperson flag
+//            boolean i_name_flag = false;
+//            rs = stmt.executeQuery(invoiceSQL);
+//            
+//            //loop through database and see if the user input's salesperson's name exists or not
+//            //if exists, set the flag to be true
+//            while (rs.next()) {
+//                int dataOrderNum = rs.getInt("ORDERNUMBER");
+//                //i_first/lastname is the name we can return true
+//                if (orderNumber == dataOrderNum) {
+//                    i_name_flag  = true;
+//                }
+//            }
+//            rs.close();
+//            stmt.close();
+//            return i_name_flag;
+//        } 
+//        catch (SQLException sqlExcept)
+//        {
+//            sqlExcept.printStackTrace();
+//        }
+//        return false;
+//    }
     
     
     /*To view the current invoices that have been fully paid. */
-    public String displayClosedInvoice(){
-        String orderSummary = "";//string for all sales
-        for(String c : invoiceState) {
-            if(c.equals("Closed")){
-               orderSummary += c;
-               orderSummary += "\n"; 
-            }    
-        }
-        return orderSummary;
-    }
+//    public String displayClosedInvoice(){
+//        String orderSummary = "";//string for all sales
+//        for(String c : invoiceState) {
+//            if(c.equals("Closed")){
+//               orderSummary += c;
+//               orderSummary += "\n"; 
+//            }    
+//        }
+//        return orderSummary;
+//    }
     
     /**
      * Helper function that adds item to the hash map
@@ -379,18 +374,18 @@ public class Invoice {
         String query = "INSERT INTO orders (orderNumber, firstName, lastName, delivery, orderDate, orderTime, salesRepID) VALUES (?,?,?,?,?,?,?)";
         try {
             PreparedStatement orders = conn.prepareStatement(query);
-            
-            orders.setInt(1, ORDERNUMBER); //set values for newBook
+            orders.setInt(1, ORDERNUMBER);
             orders.setString(2, firstName);
             orders.setString(3, lastName);
             orders.setString(4, delivery);
             orders.setDate(5, Date.valueOf(now.toString()));
             orders.setTime(6, time);
-            orders.setInt(7, 1); // NEED TO LINK --------------------------
+            orders.setInt(7, eID); 
             orders.executeUpdate(); 
             
             query = "INSERT INTO orderDetails (orderNumber, productName, quantity, priceEach) VALUES (?,?,?,?)";
             for(Map.Entry<String, Integer> electronic : items.entrySet()){
+                System.out.println(ORDERNUMBER + " " + electronic.getKey() + " " + electronic.getValue() + " " + getCost(electronic.getKey()));
                 PreparedStatement orderDetails = conn.prepareStatement(query);
                 orderDetails.setInt(1, ORDERNUMBER);
                 orderDetails.setString(2, electronic.getKey());
@@ -413,6 +408,7 @@ public class Invoice {
         }
         return this.totalDue;
     }
+    
     
     /**
      * Helper function that prints out a formatted table. 
