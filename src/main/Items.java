@@ -115,7 +115,7 @@ public class Items {
         try
         {
             stmt = conn.createStatement();
-            String insertNewSPSQL = String.format("INSERT INTO Items(NAME,ITEMQUANTITY,SELLINGPRICE,COSTPRICE, QUANTITYSOLD, PRICESOLD) values (%s,'%d','%d','%d','%d','%d')",name, quantity, sellingPrice, costPrice, quantitySold, priceSold);
+            String insertNewSPSQL = String.format("INSERT INTO Items(NAME,ITEMQUANTITY,MSRP,COSTPRICE, QUANTITYSOLD, PRICESOLD) values (%s,'%d','%d','%d','%d','%d')",name, quantity, sellingPrice, costPrice, quantitySold, priceSold);
             System.out.println(insertNewSPSQL);
             stmt.executeUpdate(insertNewSPSQL);
         }
