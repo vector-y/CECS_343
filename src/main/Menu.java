@@ -205,17 +205,18 @@ public class Menu {
         input = in.nextLine();
         if (input.equals("1")) {
             // open invoice
-            String query = "SELECT orderNumber, (SUM(quantity * priceEach) - SUM(amount)) balance FROM orders " +
-                            "INNER JOIN orderDetails USING (orderNumber) " + 
-                            "INNER JOIN payments USING (orderNumber) GROUP BY ordernumber " + 
-                            "having (SUM(quantity * priceEach) - SUM(amount)) > 0";
+            String query = "SELECT orderNumber, COALESCE(sum(amount), 0) totalpayments, "
+                    + "SUM(quantity * priceeach) total, (SUM(quantity * priceEach) - COALESCE(SUM(amount), 0)) balance from orders "
+                    + "INNER JOIN orderdetails using (ordernumber) left outer join payments using (ordernumber) "
+                    + "group by ordernumber HAVING (SUM(quantity * priceEach) - COALESCE(SUM(amount), 0)) > 0";
+;
             System.out.println(invoice.getTable(query));
         } else if (input.equals("2")) {
             // close invoice
-            String query = "SELECT orderNumber, (SUM(quantity * priceEach) - SUM(amount)) balance FROM orders " +
-                            "INNER JOIN orderDetails USING (orderNumber) " + 
-                            "INNER JOIN payments USING (orderNumber) GROUP BY ordernumber " + 
-                            "having (SUM(quantity * priceEach) - SUM(amount)) = 0";
+            String query = "SELECT orderNumber, COALESCE(sum(amount), 0) totalpayments, "
+                    + "SUM(quantity * priceeach) total, (SUM(quantity * priceEach) - COALESCE(SUM(amount), 0)) balance from orders "
+                    + "INNER JOIN orderdetails using (ordernumber) left outer join payments using (ordernumber) "
+                    + "group by ordernumber HAVING (SUM(quantity * priceEach) - COALESCE(SUM(amount), 0)) = 0";
             System.out.println(invoice.getTable(query));
         } else {
             System.out.println("Not a vaild input.  Please try again.");
