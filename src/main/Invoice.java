@@ -119,10 +119,12 @@ public class Invoice {
                     System.out.println("TESTING ORDER NUMBER: " + ORDERNUMBER);
                     System.out.println("Do you need it delivered? (Y/N)");
                     String delivery = in.nextLine().toUpperCase().trim();
+                    
                     System.out.println("\nOrder Summary -----------------------");
                     for(Map.Entry<String, Integer> electronic : items.entrySet()){
-                        System.out.println(electronic.getKey());
+                        System.out.printf("%-25s%d\n", electronic.getKey(), electronic.getValue());
                     }
+                    
                     if(delivery.equals("Y")){
                         totalDue = finalizeSale(delivery);
                         totalDue += deliveryCharge;
@@ -131,7 +133,7 @@ public class Invoice {
                         System.out.println("Thanks for shopping with us!");
                     } else if(delivery.equals("N")){
                         totalDue = finalizeSale(delivery);
-                        String orderSummary = String.format("TOTAL DUE: %.2f", totalDue);
+                        String orderSummary = String.format("TOTAL DUE: $%.2f", totalDue);
                         System.out.println(orderSummary);
                         System.out.println("Thanks for shopping with us!");
                     }
@@ -385,7 +387,6 @@ public class Invoice {
             
             query = "INSERT INTO orderDetails (orderNumber, productName, quantity, priceEach) VALUES (?,?,?,?)";
             for(Map.Entry<String, Integer> electronic : items.entrySet()){
-                System.out.println(ORDERNUMBER + " " + electronic.getKey() + " " + electronic.getValue() + " " + getCost(electronic.getKey()));
                 PreparedStatement orderDetails = conn.prepareStatement(query);
                 orderDetails.setInt(1, ORDERNUMBER);
                 orderDetails.setString(2, electronic.getKey());
