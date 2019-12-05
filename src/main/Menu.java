@@ -228,16 +228,14 @@ public class Menu {
         System.out.println("View Item Menu");
         String menu =    "1. Display Items\n"
                        + "2. Display Items fewer than 5 in inventory\n"
-                       + "3. Add Item Quantity"
-                       + "4. Remove Item Quantity\n"
+                       + "3. Add Item"
+                       + "4. Remove Item\n"
                        + "5. Change Item's Quantity"
-                       + "6. Change Item's Selling Price\n"
-                       + "7. Change Item's Cost Price"
-                       + "8. Exit";
+                       + "6. Exit";
         System.out.println(menu);
         String option = in.nextLine();
         Items item = new Items();
-        while (option != "8")
+        while (option != "6")
         {
             switch (option) 
             {
@@ -248,7 +246,16 @@ public class Menu {
                 	//display less than 5
                 	break;
                 case "3":
-                	System.out.println("Please type the name of the item you wish to add the quantity amount");
+                	System.out.println("Please type the name of the item:");
+                    String itemName = in.nextLine();
+                    System.out.println("Please type the quantity of the item:");
+                    int itemQuantity = Integer.parseInt(in.nextLine());
+                    System.out.println("Please type the Selling Price of the item:");
+                    float itemSellPrice = in.nextFloat();
+                    System.out.println("Please type the Cost Price of the item:");
+                    float itemCostPrice = in.nextFloat();
+                    Items newItem = new Items(itemName, itemQuantity, itemSellPrice, itemCostPrice);
+                       
                     
                 	break;
                 case "4":
@@ -256,12 +263,6 @@ public class Menu {
                 	break;
                 case "5":
                 	//change item's quantity
-                	break;
-                case "6":
-                	//change item selling price
-                	break;
-                case "7":
-                	//change item cost price
                 	break;
             }
             System.out.println(menu);
