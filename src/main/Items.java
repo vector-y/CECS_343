@@ -53,12 +53,12 @@ public class Items {
         rs = stmt.executeQuery(productSQL);
         quantity = rs.getInt("QUANTITYINSTOCK");
     	quantity = quantity + number;
-    	conn.close();
+    	
     	query = "UPDATE PRODUCTS SET QUANTITYINSTOCK = ? WHERE EID =" + productID;
     	PreparedStatement proSql = conn.prepareStatement(query);
     	proSql.setInt(1, quantity);
     	proSql.executeUpdate();
-    	conn.close();
+    	
         } catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -67,21 +67,19 @@ public class Items {
     
     public void changeQuantity(int productID, int number)
     {
-    	Statement stmt = null;
-        ResultSet rs = null;
+
         
         try {
-			stmt = conn.createStatement();
-		
-        String productSQL = "SELECT QUANTITYINSTOCK FROM PRODUCTS WHERE EID =" + productID;
-        rs = stmt.executeQuery(productSQL);
+        Statement stmt = conn.createStatement();
+	    ResultSet rs = stmt.executeQuery("SELECT QUANTITYINSTOCK FROM PRODUCTS WHERE productNumber =" + productID);
+			
+	
     	quantity = number;
-    	conn.close();
-    	String query = "UPDATE PRODUCTS SET QUANTITYINSTOCK = ? WHERE EID =" + productID;
+    	String query = "UPDATE PRODUCTS SET QUANTITYINSTOCK = ? WHERE productNumber =" + productID;
     	PreparedStatement proSql = conn.prepareStatement(query);
     	proSql.setInt(1, quantity);
     	proSql.executeUpdate();
-    	conn.close();
+    	
         } catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -155,8 +153,48 @@ public class Items {
     
     public void displayProfitList()
     {
+    	try {
+	    	Statement stmt = conn.createStatement();
+	        ResultSet rs = stmt.executeQuery("SELECT * FROM products WHERE quantityInStock < 5");
+	        System.out.format("%4s%32s%32s%32s%32s%32s","ID","Name","Quantity","MSRP","CostPrice","Profit\n");
+            
+            while (rs.next()) {
+               int did = rs.getInt("productNumber");
+               String dname = rs.getString("productName");
+               int dquantity = rs.getInt("quantityInStock");
+               float dMSRP = rs.getFloat("MSRP");
+               float dcostPrice = rs.getFloat("buyPrice");
+               float dprofit = rs.getFloat("profit");
+               System.out.format("%4s%32s%32s%32s%32s%32s", did,dname,dquantity,dMSRP,dcostPrice,dprofit+"\n");
+               
+            }
+    	} catch(SQLException e) {
+            System.out.println("SQL exception occured" + e);
+         }
+    }
+    
+    public void displayIDList() 
+    {
     	
-    	
+        try {
+            
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT * FROM products");
+            System.out.format("%4s%32s%32s%32s%32s%32s","ID","Name","Quantity","MSRP","CostPrice","Profit\n");
+            
+            while (rs.next()) {
+               int did = rs.getInt("productNumber");
+               String dname = rs.getString("productName");
+               int dquantity = rs.getInt("quantityInStock");
+               float dMSRP = rs.getFloat("MSRP");
+               float dcostPrice = rs.getFloat("buyPrice");
+               float dprofit = rs.getFloat("profit");
+               System.out.format("%4s%32s%32s%32s%32s%32s", did,dname,dquantity,dMSRP,dcostPrice,dprofit+"\n");
+               
+            }
+         } catch(SQLException e) {
+            System.out.println("SQL exception occured" + e);
+         }
     }
     
     private void incrNum() {
