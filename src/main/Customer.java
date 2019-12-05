@@ -19,7 +19,7 @@ public class Customer {
     }
     
     /**
-     * Overloaded constructor for customer. Inserts the customer data into the database. 
+     * Overloaded constructor to add customer. Inserts the customer data into the database. 
      * @param connect - Connection to the database.
      * @param firstName - First name of the customer.
      * @param lastName - Last name of the customer.
