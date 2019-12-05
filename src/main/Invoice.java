@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package main;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -37,13 +32,14 @@ public class Invoice {
     private int paymentCount;
     private int dayCount;
     private float invoiceCharge;
-    private int deliveryCharge;
+    private double deliveryCharge = 0;
     private float invoiceDiscount;
     private ArrayList<String> invoiceState;
     private Map<String, Integer> items;
     static Scanner in = new Scanner(System.in);
     Date now;
     Time time;
+    Items item;
     
     // Customer name
     private String firstName;
@@ -53,7 +49,7 @@ public class Invoice {
     private int eID;
 
     public Invoice () {
-        
+        this.item = new Items();
     }
 
     /**
@@ -69,77 +65,55 @@ public class Invoice {
         this.firstName = firstName;
         this.lastName = lastName;
         this.eID = eID;
-        
+        this.item = new Items();
         items = new HashMap<String, Integer>();
-    }
-    
-    /**
-     * Helper function to print the invoice menu
-     */
-    public void invoiceMenu(){
-        System.out.println("	(1) Add an electronic");
-        System.out.println("	(2) End the sale");
-        System.out.print("Please select an option: ");
     }
     
     /**
      * Helper function to print the menu
      */
     public void electronicMenu(){
-        System.out.println("	(1) Airpods Pro");
-        System.out.println("	(2) Surface Pro X");
-        System.out.println("	(3) Macbook Pro");
-        System.out.println("	(4) Google Nest Wifi");
-        System.out.println("	(5) Bose Noise Cancelling Headphones 700");
-        System.out.println("	(6) Google Pixel 4");
-        System.out.println("	(7) iPhone 11 Pro");
-        System.out.println("	(8) Galaxy Note 10");
-        System.out.println("	(9) Amazon Fire TV Stick");
-        System.out.println("	(10) Samsung Smart TV 4K with HDR");
-//        String query = "SELECT productName, MSRP FROM products";
-//        System.out.println(getTable(query));
+        Items items = new Items();
+        System.out.println(items.getItemsForSale());
     }
     
     /**
      * To add new invoice for a valid customer. 
      */
     public void addNewInvoice(){
-        boolean saleOver = false;
+        Scanner in = new Scanner(System.in);
         int choice;
-        while(saleOver == false){
-            invoiceMenu();
-            choice = menu(Integer.parseInt(in.nextLine()));
+        System.out.println("\n\nItems For Sale:");
+        System.out.println(item.getItemsForSale());
+        System.out.print("Please select an item. (Enter -1 when done): ");
+        choice = Integer.parseInt(in.nextLine());
+        while (choice != -1) {
             System.out.println("Selected Option " + choice);
-            switch(choice){
-                case 1:
-                    newElectronicOrder();
-                    break;
-                case 2:                    
-                    ORDERNUMBER = getOrderNumber();
-                    System.out.println("TESTING ORDER NUMBER: " + ORDERNUMBER);
-                    System.out.println("Do you need it delivered? (Y/N)");
-                    String delivery = in.nextLine().toUpperCase().trim();
-                    
-                    System.out.println("\nOrder Summary -----------------------");
-                    for(Map.Entry<String, Integer> electronic : items.entrySet()){
-                        System.out.printf("%-25s%d\n", electronic.getKey(), electronic.getValue());
-                    }
-                    
-                    if(delivery.equals("Y")){
-                        totalDue = finalizeSale(delivery);
-                        totalDue += deliveryCharge;
-                        String orderSummary = String.format("TOTAL DUE: %f", totalDue);
-                        System.out.println(orderSummary);
-                        System.out.println("Thanks for shopping with us!");
-                    } else if(delivery.equals("N")){
-                        totalDue = finalizeSale(delivery);
-                        String orderSummary = String.format("TOTAL DUE: $%.2f", totalDue);
-                        System.out.println(orderSummary);
-                        System.out.println("Thanks for shopping with us!");
-                    }
-                    saleOver = true;
-                    break;
-            }
+            addItem(this.item.getName(choice));
+            System.out.print("Please select an item. (Enter -1 when done): ");
+            choice = Integer.parseInt(in.nextLine());
+        }
+        ORDERNUMBER = getOrderNumber();
+        System.out.println("Do you need it delivered? (Y/N)");
+        String delivery = in.nextLine().toUpperCase().trim();
+
+        System.out.println("\nOrder Summary -----------------------");
+        System.out.println("Order Number " + ORDERNUMBER);
+        for(Map.Entry<String, Integer> electronic : items.entrySet()){
+            System.out.printf("%-25s%d\n", electronic.getKey(), electronic.getValue());
+        }
+
+        if(delivery.equals("Y")){
+            totalDue = finalizeSale(delivery);
+            totalDue += (totalDue * deliveryCharge);
+            String orderSummary = String.format("TOTAL DUE: %f", totalDue);
+            System.out.println(orderSummary);
+            System.out.println("Thanks for shopping with us!");
+        } else if(delivery.equals("N")){
+            totalDue = finalizeSale(delivery);
+            String orderSummary = String.format("TOTAL DUE: $%.2f", totalDue);
+            System.out.println(orderSummary);
+            System.out.println("Thanks for shopping with us!");
         }
     }
     
@@ -172,7 +146,6 @@ public class Invoice {
     public void makePayment(){
         System.out.println("Enter payment: ");
         double payment = Double.parseDouble((in.nextLine()));
-        //double change =
     }
  
     /**
@@ -198,99 +171,11 @@ public class Invoice {
     }
     
     /**
-     * Helper function that adds the items into the hash map and keeps count of items. 
-     */
-    public void newElectronicOrder(){
-        electronicMenu();
-        int choice;
-        choice = menu(Integer.parseInt(in.nextLine()));
-        switch(choice) {
-            case 1:
-                addItem("AirPods Pro");
-                break;
-            case 2:
-                addItem("Surface Pro X");
-                break;
-            case 3:
-                addItem("Macbook Pro");
-                break;
-            case 4:
-                addItem("Google Nest Wifi");
-                break;
-            case 5:
-                addItem("Bose Noise Cancelling Headphones 700");
-                break;
-            case 6:
-                addItem("Google Pixel 4");
-                break;
-            case 7:
-                addItem("iPhone 11 Pro");
-                break;
-            case 8:
-                addItem("Galaxy Note 10");
-                break;
-            case 9:
-                addItem("Amazon Fire TV Stick");
-                break;
-            case 10:
-                addItem("Samsung Smart TV 4K with HDR");
-                break;
-        }
-    }
-    
-    /**
-     * Helper function that gets the cost of the items.
-     * @param selection
-     * @return cost as double
-     */
-    public double getCost(String selection) {
-        if(selection.equals("AirPods Pro")) {
-            return 100;
-        }
-        if(selection.equals("Surface Pro X")) {
-            return 200;
-        }
-        if(selection.equals("Macbook Pro")) {
-            return 300;
-        }
-        if(selection.equals("Google Nest Wifi")) {
-            return 400;
-        }
-        if(selection.equals("Bose Noise Cancelling Headphones 700")) {
-            return 500;
-        }
-        if(selection.equals("Google Pixel 4")) {
-            return 600;
-        }
-        if(selection.equals("iPhone 11 Pro")) {
-            return 700;
-        }
-        if(selection.equals("Galaxy Note 10")) {
-            return 800;
-        }
-        if(selection.equals("Amazon Fire TV Stick")) {
-            return 900;
-        }
-        if(selection.equals("Samsung Smart TV 4K with HDR")) {
-            return 1000;
-        }
-        return 0;
-    }
-    
-    /**
-     * Returns an int to let us know what the user picked
-     * @param x - user input as an integer.
-     * @return an integer that the user picked.
-     */
-    public static int menu(int x) {
-        return x;
-    }
-    
-    /**
      * Function to prompt for delivery information.
      * @return the delivery address
      */
     public String addDeliveryInfo(){
+        Scanner in = new Scanner(System.in);
         System.out.println("What's your address?");
         String address = in.nextLine();
         System.out.println("What's your city?");
@@ -301,58 +186,7 @@ public class Invoice {
         insertDeliveryToDatabase(address, city, zipCode);
         return overallAddress;
     }
-    
-    
-    /**
-     * Helper function to determine if the invoice is valid
-     * @param orderNumber
-     * @return True if valid
-     */
-//    public boolean checkInvoice(int orderNumber){
-//        Statement stmt = null;
-//        ResultSet rs = null;
-//        System.out.println(orderNumber);
-//        
-//        System.out.println(orderNumber);
-//        try {
-//            stmt = conn.createStatement();
-//            String invoiceSQL = "SELECT * FROM ORDERS";
-//            //initlize for salesperson flag
-//            boolean i_name_flag = false;
-//            rs = stmt.executeQuery(invoiceSQL);
-//            
-//            //loop through database and see if the user input's salesperson's name exists or not
-//            //if exists, set the flag to be true
-//            while (rs.next()) {
-//                int dataOrderNum = rs.getInt("ORDERNUMBER");
-//                //i_first/lastname is the name we can return true
-//                if (orderNumber == dataOrderNum) {
-//                    i_name_flag  = true;
-//                }
-//            }
-//            rs.close();
-//            stmt.close();
-//            return i_name_flag;
-//        } 
-//        catch (SQLException sqlExcept)
-//        {
-//            sqlExcept.printStackTrace();
-//        }
-//        return false;
-//    }
-    
-    
-    /*To view the current invoices that have been fully paid. */
-//    public String displayClosedInvoice(){
-//        String orderSummary = "";//string for all sales
-//        for(String c : invoiceState) {
-//            if(c.equals("Closed")){
-//               orderSummary += c;
-//               orderSummary += "\n"; 
-//            }    
-//        }
-//        return orderSummary;
-//    }
+ 
     
     /**
      * Helper function that adds item to the hash map
@@ -391,7 +225,7 @@ public class Invoice {
                 orderDetails.setInt(1, ORDERNUMBER);
                 orderDetails.setString(2, electronic.getKey());
                 orderDetails.setInt(3, electronic.getValue());
-                orderDetails.setDouble(4, getCost(electronic.getKey()));
+                orderDetails.setDouble(4, item.getCost(electronic.getKey()));        
                 orderDetails.executeUpdate();
             }
             
