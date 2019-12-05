@@ -241,8 +241,10 @@ public class Menu {
             {
                 case "1" :
                 	//display
+                	item.displayIDList();
                 	break;
                 case "2":
+                	item.displayProfitList();
                 	//display less than 5
                 	break;
                 case "3":
@@ -261,7 +263,12 @@ public class Menu {
                 	//remove item
                 	break;
                 case "5":
-                	//change item's quantity
+                	item.displayIDList();
+                	System.out.println("Please type the id of the item you wish to change:");
+                	int productID = Integer.parseInt(in.nextLine());
+                	System.out.println("Please type the new quantity amount:");
+                	int number = Integer.parseInt(in.nextLine());
+                	item.changeQuantity(productID, number);
                 	break;
                 case "6":
                 	//change item selling price
