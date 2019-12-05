@@ -13,6 +13,7 @@ public class Items {
     DBConnect dbConnection = new DBConnect();
     Connection conn = dbConnection.connect();
     
+    public int PRODUCTNUMBER = 0;
     private String name;
     private int quantity;
     private float sellingPrice;
@@ -31,6 +32,7 @@ public class Items {
     	quantitySold = 0;
     	priceSold = 0;
     	profit = 0;
+    	insertSPToDatabase();
     	
     }
     
@@ -40,20 +42,27 @@ public class Items {
     
     public void addQuantity(int productID, int number)
     {
+    	String query = "SELECT productName, MSRP FROM products";
+        
     	Statement stmt = null;
         ResultSet rs = null;
         
+        try {
         stmt = conn.createStatement();
         String productSQL = "SELECT QUANTITYINSTOCK FROM PRODUCTS WHERE EID =" + productID;
         rs = stmt.executeQuery(productSQL);
         quantity = rs.getInt("QUANTITYINSTOCK");
     	quantity = quantity + number;
     	conn.close();
-    	String query = "UPDATE PRODUCTS SET QUANTITYINSTOCK = ? WHERE EID =" + productID;
+    	query = "UPDATE PRODUCTS SET QUANTITYINSTOCK = ? WHERE EID =" + productID;
     	PreparedStatement proSql = conn.prepareStatement(query);
     	proSql.setInt(1, quantity);
     	proSql.executeUpdate();
     	conn.close();
+        } catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
     
     public void changeQuantity(int productID, int number)
@@ -61,7 +70,9 @@ public class Items {
     	Statement stmt = null;
         ResultSet rs = null;
         
-        stmt = conn.createStatement();
+        try {
+			stmt = conn.createStatement();
+		
         String productSQL = "SELECT QUANTITYINSTOCK FROM PRODUCTS WHERE EID =" + productID;
         rs = stmt.executeQuery(productSQL);
     	quantity = number;
@@ -71,6 +82,10 @@ public class Items {
     	proSql.setInt(1, quantity);
     	proSql.executeUpdate();
     	conn.close();
+        } catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
     
     public float getQuantity(int productID)
@@ -144,14 +159,42 @@ public class Items {
     	
     }
     
+    private void incrNum() {
+        int number = 0;
+        String query = "SELECT COALESCE(number, 0) productNumber FROM \n"
+                + "(SELECT MAX(productNumber) number from products) x";
+        Statement stmt = null;
+        try {
+            stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+
+            while (rs.next()) {
+                number = rs.getInt("productNumber");
+            }
+        } catch (Exception e) {
+            //Handle errors for Class.forName
+            e.printStackTrace();
+        }
+        if (number == 0) {
+            this.PRODUCTNUMBER = 1;
+        } else {
+            this.PRODUCTNUMBER = number + 1;
+        }
+    }
+    
     void insertSPToDatabase() {
-        Statement stmt;
+    	incrNum();
         try
         {
-            stmt = conn.createStatement();
-            String insertNewSPSQL = String.format("INSERT INTO products(productName,quantityInStock,MSRP,buyPrice, QUANTITYSOLD, PRICESOLD) values (%s,'%d','%d','%d','%d','%d')",name, quantity, sellingPrice, costPrice, quantitySold, priceSold);
-            System.out.println(insertNewSPSQL);
-            stmt.executeUpdate(insertNewSPSQL);
+        	String query = String.format("INSERT INTO products(productNumber,productName,quantityInStock,MSRP,buyPrice, profit) VALUES (?,?,?,?,?,?)");
+        	PreparedStatement stmt = conn.prepareStatement(query);
+        	stmt.setInt(1, PRODUCTNUMBER);
+        	stmt.setString(2, name);
+        	stmt.setInt(3, quantity);
+        	stmt.setFloat(4, sellingPrice);
+        	stmt.setFloat(5, costPrice);
+        	stmt.setFloat(6, profit);
+            stmt.executeUpdate();
         }
         catch (SQLException sqlExcept)
         {
