@@ -220,19 +220,18 @@ public class Menu {
         String menu =    "1. Display Items\n"
                        + "2. Display Items fewer than 5 in inventory\n"
                        + "3. Add Item\n"
-                       + "4. Remove Item\n"
-                       + "5. Change Item's Quantity\n"
-                       + "6. Exit\n";
+                       + "4. Change Item's Quantity\n"
+                       + "5. Exit\n";
         System.out.println(menu);
         String option = in.nextLine();
         Items item = new Items();
-        while (!(option.equals("6")))
+        while (!(option.equals("5")))
         {
             switch (option) 
             {
                 case "1" :
                 	//display
-                	item.displayIDList();
+                	item.displayProfitPercentList();
                 	break;
                 case "2":
                 	item.displayProfitList();
@@ -251,19 +250,16 @@ public class Menu {
                     
                 	break;
                 case "4":
-                	//remove item
-                	break;
-                case "5":
                 	item.displayIDList();
                 	System.out.println("Please type the id of the item you wish to change:");
                 	int productID = Integer.parseInt(in.nextLine());
                 	System.out.println("Please type the new quantity amount:");
                 	int number = Integer.parseInt(in.nextLine());
                 	item.changeQuantity(productID, number);
+                	
                 	break;
-                case "6":
-                	//change item selling price
-                	break;
+                case "5":
+                    break;
             }
             
             System.out.println(menu);
