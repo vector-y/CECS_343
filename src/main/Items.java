@@ -3,12 +3,12 @@ package main;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.PreparedStatement;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
+import java.util.Arrays;
+import java.util.Collections;
 
 public class Items {
     DBConnect dbConnection = new DBConnect();
@@ -61,16 +61,18 @@ public class Items {
     	proSql.executeUpdate();
     	
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-	}
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
     
     public void changeQuantity(int productID, int number)
-    {  
+    {
+
+        
         try {
         Statement stmt = conn.createStatement();
-	ResultSet rs = stmt.executeQuery("SELECT QUANTITYINSTOCK FROM PRODUCTS WHERE productNumber =" + productID);
+	    ResultSet rs = stmt.executeQuery("SELECT QUANTITYINSTOCK FROM PRODUCTS WHERE productNumber =" + productID);
 			
 	
     	quantity = number;
@@ -80,9 +82,9 @@ public class Items {
     	proSql.executeUpdate();
     	
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-	}
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
     
     public float getQuantity(int productID)
@@ -114,25 +116,11 @@ public class Items {
     	name = newName;
     }
     
-     public String getName(int option) {
-        String name = "";
-        int count = 1;
-        try {
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT productName, msrp FROM products ORDER BY productName");
-            
-            while (rs.next()) { 
-               if(count == option) {
-                   name = rs.getString("productName");
-                   break;
-               }
-               count += 1;
-            }
-    	} catch(SQLException e) {
-            System.out.println("SQL exception occured" + e);
-        }
-        return name;
+    public String getName()
+    {
+    	return name;
     }
+    
     
     public void setCostPrice(float newPrice)
     {
@@ -164,69 +152,11 @@ public class Items {
     	return profit;
     }
     
-    /**
-     * To get the cost of the item that is selected from the getItemsForSale list.
-     * @param option
-     * @return 
-     */
-    public double getCost(int option) {
-        double cost = 0;
-        int count = 1;
-        try {
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT productName, msrp FROM products ORDER BY productName");
-            
-            while (rs.next()) { 
-               count += 1;
-               if(count == option * 2) {
-                   cost = rs.getDouble("msrp");
-                   break;
-               }
-            }
-    	} catch(SQLException e) {
-            System.out.println("SQL exception occured" + e);
-        }
-        return cost;
-    }
-        /**
-     * To get the cost of the item by product name.
-     * @param option
-     * @return 
-     */
-    public double getCost(String name) {
-        double cost = 0;
-        String productName = "";
-        try {
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT productName, msrp FROM products ORDER BY productName");
-            
-            while (rs.next()) { 
-                productName = rs.getString("productName");
-                if(productName.equals(name)) {
-                   cost = rs.getDouble("msrp");
-                   break;
-                }
-            }
-    	} catch(SQLException e) {
-            System.out.println("SQL exception occured" + e);
-        }
-        return cost;
-    }
-    
-    /**
-     * To get the items in inventory that is available for sale. 
-     * @return 
-     */
-    public String getItemsForSale() {
-        String query = "SELECT productName, msrp FROM products ORDER BY productName";
-        return getTable(query);
-    }
-    
     public void displayProfitList()
     {
     	try {
 	    	Statement stmt = conn.createStatement();
-	        ResultSet rs = stmt.executeQuery("SELECT * FROM products WHERE quantityInStock < 5");
+	        ResultSet rs = stmt.executeQuery("SELECT * FROM products WHERE quantityInStock < 5 ORDER BY quantityInStock DESC");
 	        System.out.format("%4s%32s%32s%32s%32s%32s","ID","Name","Quantity","MSRP","CostPrice","Profit\n");
             
             while (rs.next()) {
@@ -241,11 +171,34 @@ public class Items {
             }
     	} catch(SQLException e) {
             System.out.println("SQL exception occured" + e);
-        }
+         }
     }
+    public void displayProfitPercentList()
     
+    {
+    	
+    	try {
+	    	Statement stmt = conn.createStatement();
+	        ResultSet rs = stmt.executeQuery("SELECT *  FROM products ORDER BY (MSRP - buyPrice) / buyPrice * 100 DESC");
+	        System.out.format("%4s%20s%20s%20s%20s%20s%20s","ID","Name","Quantity","MSRP","CostPrice","Profit", "Profit Percent\n");
+            
+            while (rs.next()) {
+               int did = rs.getInt("productNumber");
+               String dname = rs.getString("productName");
+               int dquantity = rs.getInt("quantityInStock");
+               float dMSRP = rs.getFloat("MSRP");
+               float dcostPrice = rs.getFloat("buyPrice");
+               float dprofit = rs.getFloat("profit");
+               System.out.format("%4s%20s%20s%20s%20s%20s%20s", did,dname,dquantity,dMSRP,dcostPrice,dprofit, (dMSRP - dcostPrice) / dcostPrice * 100+"\n");
+               
+            }
+    	} catch(SQLException e) {
+            System.out.println("SQL exception occured" + e);
+         }
+    }
     public void displayIDList() 
     {
+    	
         try {
             
             Statement stmt = conn.createStatement();
@@ -294,14 +247,14 @@ public class Items {
     	incrNum();
         try
         {
-            String query = String.format("INSERT INTO products(productNumber,productName,quantityInStock,MSRP,buyPrice, profit) VALUES (?,?,?,?,?,?)");
-            PreparedStatement stmt = conn.prepareStatement(query);
-            stmt.setInt(1, PRODUCTNUMBER);
-            stmt.setString(2, name);
-            stmt.setInt(3, quantity);
-            stmt.setFloat(4, sellingPrice);
-            stmt.setFloat(5, costPrice);
-            stmt.setFloat(6, profit);
+        	String query = String.format("INSERT INTO products(productNumber,productName,quantityInStock,MSRP,buyPrice, profit) VALUES (?,?,?,?,?,?)");
+        	PreparedStatement stmt = conn.prepareStatement(query);
+        	stmt.setInt(1, PRODUCTNUMBER);
+        	stmt.setString(2, name);
+        	stmt.setInt(3, quantity);
+        	stmt.setFloat(4, sellingPrice);
+        	stmt.setFloat(5, costPrice);
+        	stmt.setFloat(6, profit);
             stmt.executeUpdate();
         }
         catch (SQLException sqlExcept)
@@ -309,53 +262,6 @@ public class Items {
             sqlExcept.printStackTrace();
         }
     }
+    		
     
-    /**
-     * Helper function to create menu for the Items for sale.
-     * @param query - The query to create the table with.
-     * @return table as a String
-     */
-    public String getTable(String query) {
-        Statement stmt = null;
-        String table = "";
-        String label = "";
-        int columnSize = 0;
-        int column = 0;
-        int count = 1;
-        try {
-            // To list the column labels.
-            stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery(query);
-            ResultSetMetaData rsmd = rs.getMetaData();
-            column = rsmd.getColumnCount();
-            
-            for (int i = 1; i <= column; i++) {
-                label = rsmd.getColumnName(i);
-                columnSize = rsmd.getColumnDisplaySize(i); // Each column may have a different length
-                table += String.format("%-" + columnSize + "s", label); // To format by column size from left.
-            }
-            table += "\n";
-            // To store all the rows with format. 
-            if (!rs.next()) {
-                return "No Items in Inventory to Sell.  Please add items.";
-            } else {
-                do {
-                    table += count + ") ";
-                    for (int i = 1; i <= column; i++) {
-                        columnSize = rsmd.getColumnDisplaySize(i);
-                        table += String.format("%-" + columnSize + "s", rs.getString(i));
-                    }
-                    table += "\n";
-                    count += 1;
-                } while (rs.next());
-            }
-        } catch (SQLException se) {
-            //Handle errors for JDBC
-            se.printStackTrace();
-        } catch (Exception e) {
-            //Handle errors for Class.forName
-            e.printStackTrace();
-        }
-        return table;
-    }
   }
